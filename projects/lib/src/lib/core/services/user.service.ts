@@ -14,9 +14,9 @@ import { AccountService } from "./account.service";
   providedIn: "root"
 })
 export class UserService<
-  _Account extends I_Account<firebase.firestore.Timestamp>,
-  Account extends IAccount<firebase.firestore.Timestamp>,
-  User extends IUser<firebase.firestore.Timestamp>
+  _Account extends I_Account,
+  Account extends IAccount,
+  User extends IUser
 > {
   static readonly path = "users";
 
@@ -40,8 +40,8 @@ export class UserService<
   }
 
   /**
-   * 
-   * @param userID 
+   *
+   * @param userID
    */
   user$(userID: string) {
     return this.firestore
@@ -52,51 +52,46 @@ export class UserService<
   }
 
   /**
-   * 
-   * @param type 
-   * @param email 
-   * @param password 
+   *
+   * @param email
+   * @param password
    */
   async login(
-    type: "email",
     email: string,
     password: string
   ): Promise<firebase.auth.UserCredential>;
 
   /**
-   * 
-   * @param type 
+   *
+   * @param provider
    */
   async login(
-    type: "google" | "twitter"
+    provider: firebase.auth.AuthProvider
   ): Promise<firebase.auth.UserCredential>;
 
   async login(...args: any[]): Promise<firebase.auth.UserCredential> {
-    const type: "email" | "google" | "twitter" = args[0];
-
-    if (type === "email") {
-      const email: string = args[2];
-      const password: string = args[3];
+    if (typeof args[0] === "string") {
+      const [email, password] = args as [string, string];
 
       return await this.auth.auth.signInWithEmailAndPassword(email, password);
     } else {
-      const provider = this.getAuthProvider(type);
+      const [provider] = args as [firebase.auth.AuthProvider];
       return await this.auth.auth.signInWithPopup(provider);
     }
   }
 
   /**
-   * 
-   * @param credential 
-   * @param _accountFactory 
-   * @param accountFactory 
-   * @param userFactory 
+   *
+   * @param credential
+   * @param _accountFactory
+   * @param accountFactory
+   * @param userFactory
    */
   async validateNewUser(
     credential: firebase.auth.UserCredential,
-    _accountFactory: (i_Account: I_Account<firebase.firestore.Timestamp>) => _Account,
-    accountFactory: (iAccount: IAccount<firebase.firestore.Timestamp>) => Account,
-    userFactory: (iuser: IUser<firebase.firestore.Timestamp>) => User
+    _accountFactory: (i_Account: I_Account) => _Account,
+    accountFactory: (iAccount: IAccount) => Account,
+    userFactory: (iuser: IUser) => User
   ) {
     if (
       credential.additionalUserInfo &&
@@ -107,7 +102,7 @@ export class UserService<
         const userID = credential.user!.uid;
         const accountID = this.firestore.createId();
 
-        const i_Account: I_Account<firebase.firestore.Timestamp> = {
+        const i_Account: I_Account = {
           admin_user_ids: [userID],
           updated_at: now
         };
@@ -118,7 +113,7 @@ export class UserService<
           _accountFactory(i_Account)
         );
 
-        const iAccount: IAccount<firebase.firestore.Timestamp> = {
+        const iAccount: IAccount = {
           user_ids: [userID],
           image_url: credential.user!.photoURL || "",
           created_at: now,
@@ -131,7 +126,7 @@ export class UserService<
           accountFactory(iAccount)
         );
 
-        const iUser: IUser<firebase.firestore.Timestamp> = {
+        const iUser: IUser = {
           selected_account_id: accountID,
           account_ids_order: [accountID],
           updated_at: now
@@ -146,32 +141,21 @@ export class UserService<
   }
 
   /**
-   * 
+   *
    */
   async logout() {
     await this.auth.auth.signOut();
   }
 
   /**
-   * 
-   * @param firebaseUser 
-   * @param type 
+   *
+   * @param firebaseUser
+   * @param type
    */
-  async link(firebaseUser: firebase.User, type: "google" | "twitter") {
-    const provider = this.getAuthProvider(type);
+  async link(
+    firebaseUser: firebase.User,
+    provider: firebase.auth.AuthProvider
+  ) {
     return await firebaseUser.linkWithPopup(provider);
-  }
-
-  /**
-   * 
-   * @param type 
-   */
-  private getAuthProvider(type: "google" | "twitter") {
-    switch (type) {
-      case "google":
-        return new firebase.auth.GoogleAuthProvider();
-      case "twitter":
-        return new firebase.auth.TwitterAuthProvider();
-    }
   }
 }

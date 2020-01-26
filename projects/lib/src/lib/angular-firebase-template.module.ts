@@ -1,16 +1,21 @@
-import { NgModule } from '@angular/core';
-import { LoadingDialogComponent } from './loading-dialog/loading-dialog.component';
-import { MaterialModule } from './material/material.module';
-import { CommonModule } from '@angular/common';
-
-
+import { NgModule } from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { FormsModule } from "@angular/forms";
+import { FlexLayoutModule } from "@angular/flex-layout";
+import { MaterialModule } from "./material/material.module";
+import { MinDirective } from "./core/directives/min.directive";
+import { MaxDirective } from "./core/directives/max.directive";
+import { LoadingDialogComponent } from "./loading-dialog/loading-dialog.component";
+import { PaymentDialogComponent } from "./payment-dialog/payment-dialog.component";
 
 @NgModule({
-  declarations: [LoadingDialogComponent],
-  imports: [
-    CommonModule,
-    MaterialModule
+  declarations: [
+    MinDirective,
+    MaxDirective,
+    LoadingDialogComponent,
+    PaymentDialogComponent
   ],
+  imports: [CommonModule, FormsModule, FlexLayoutModule, MaterialModule],
   exports: [LoadingDialogComponent]
 })
-export class AngularFirebaseTemplateModule { }
+export class AngularFirebaseTemplateModule {}

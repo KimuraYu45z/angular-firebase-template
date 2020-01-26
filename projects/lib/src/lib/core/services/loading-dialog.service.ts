@@ -17,6 +17,6 @@ export class LoadingDialogService {
       LoadingDialogComponent,
       LoadingDialogComponentData,
       undefined
-    >(LoadingDialogComponent, { data: { message$ } });
+    >(LoadingDialogComponent, { data: { message$ }, disableClose: true });
   }
 }

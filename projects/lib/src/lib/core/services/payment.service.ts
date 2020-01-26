@@ -1,14 +1,13 @@
 import { Injectable } from "@angular/core";
 import { AngularFirestore } from "@angular/fire/firestore";
 import { AngularFireFunctions } from "@angular/fire/functions";
-import * as firebase from "firebase/app";
 import { IPayment } from "../types/i-payment";
 
 @Injectable({
   providedIn: "root"
 })
 export class PaymentService<
-  Payment extends IPayment<firebase.firestore.Timestamp>
+  Payment extends IPayment
 > {
   static readonly path = "payments";
   constructor(

@@ -2,15 +2,14 @@ import { Injectable } from "@angular/core";
 import { I_Account } from "../types/i-_account";
 import { IAccount } from "../types/i-account";
 import { AngularFirestore } from "@angular/fire/firestore";
-import * as firebase from "firebase/app";
 import { isNotNull } from "../operators/is-not-null";
 
 @Injectable({
   providedIn: "root"
 })
 export class AccountService<
-  _Account extends I_Account<firebase.firestore.Timestamp>,
-  Account extends IAccount<firebase.firestore.Timestamp>
+  _Account extends I_Account,
+  Account extends IAccount
 > {
   static readonly path = "accounts";
   static readonly _path = "_accounts";

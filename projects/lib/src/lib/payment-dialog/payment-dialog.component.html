@@ -1,0 +1,9 @@
+<form #form="ngForm" (submit)="onSubmit()">
+  <div id="card-element" #cardElement></div>
+  <ng-container *ngIf="error">
+    <p class="error">{{ error?.message }}</p>
+  </ng-container>
+  <button mat-stroked-button fxFill color="accent">
+    Pay {{ data.amount }} {{ data.currency | uppercase }}
+  </button>
+</form>

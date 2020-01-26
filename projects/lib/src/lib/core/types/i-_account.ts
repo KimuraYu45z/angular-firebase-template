@@ -1,6 +1,6 @@
-export interface I_Account<Timestamp> {
+export interface I_Account {
   admin_user_ids: string[];
-  updated_at: Timestamp;
+  updated_at: firebase.firestore.Timestamp;
 
   _id?: string;
 }
