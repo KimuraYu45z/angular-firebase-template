@@ -88,15 +88,15 @@ export class UserService<
   /**
    * 
    * @param credential 
-   * @param _account 
-   * @param account 
-   * @param user 
+   * @param _accountFactory 
+   * @param accountFactory 
+   * @param userFactory 
    */
   async validateNewUser(
     credential: firebase.auth.UserCredential,
-    _account: (i_Account: I_Account<firebase.firestore.Timestamp>) => _Account,
-    account: (iAccount: IAccount<firebase.firestore.Timestamp>) => Account,
-    user: (iuser: IUser<firebase.firestore.Timestamp>) => User
+    _accountFactory: (i_Account: I_Account<firebase.firestore.Timestamp>) => _Account,
+    accountFactory: (iAccount: IAccount<firebase.firestore.Timestamp>) => Account,
+    userFactory: (iuser: IUser<firebase.firestore.Timestamp>) => User
   ) {
     if (
       credential.additionalUserInfo &&
@@ -115,7 +115,7 @@ export class UserService<
           this.firestore
             .collection<_Account>(AccountService._path)
             .doc(accountID).ref,
-          _account(i_Account)
+          _accountFactory(i_Account)
         );
 
         const iAccount: IAccount<firebase.firestore.Timestamp> = {
@@ -128,7 +128,7 @@ export class UserService<
         t.set(
           this.firestore.collection<Account>(AccountService.path).doc(accountID)
             .ref,
-          account(iAccount)
+          accountFactory(iAccount)
         );
 
         const iUser: IUser<firebase.firestore.Timestamp> = {
@@ -139,7 +139,7 @@ export class UserService<
         t.set(
           this.firestore.collection<User>(UserService.path).doc<User>(userID)
             .ref,
-          user(iUser)
+          userFactory(iUser)
         );
       });
     }
