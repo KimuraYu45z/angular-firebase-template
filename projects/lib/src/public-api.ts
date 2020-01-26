@@ -3,3 +3,4 @@
  */
 
 export * from './lib/angular-firebase-template.module';
+export * from "./lib/core"
