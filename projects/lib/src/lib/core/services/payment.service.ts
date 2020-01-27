@@ -38,7 +38,8 @@ export class PaymentService<
     receipt_email: string,
     source: string,
     from_account_id: string,
-    to_account_id: string
+    to_account_id: string,
+    is_test?: boolean
   ) {
     return await this.functions
       .httpsCallable("payments_charge")({
@@ -48,7 +49,8 @@ export class PaymentService<
         receipt_email,
         source,
         from_account_id,
-        to_account_id
+        to_account_id,
+        is_test
       })
       .toPromise();
   }
