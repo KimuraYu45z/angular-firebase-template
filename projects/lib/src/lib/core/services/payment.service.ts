@@ -35,22 +35,20 @@ export class PaymentService<
     amount: number,
     currency: string,
     description: string,
-    email: string,
-    token: string,
+    receipt_email: string,
+    source: string,
     from_account_id: string,
-    to_account_id: string,
-    commision: number
+    to_account_id: string
   ) {
     return await this.functions
       .httpsCallable("payments_charge")({
         amount,
         currency,
         description,
-        email,
-        token,
+        receipt_email,
+        source,
         from_account_id,
-        to_account_id,
-        commision
+        to_account_id
       })
       .toPromise();
   }
