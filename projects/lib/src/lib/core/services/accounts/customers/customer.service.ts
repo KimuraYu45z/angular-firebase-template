@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { AngularFireFunctions } from '@angular/fire/functions';
-import { AccountService } from './account.service';
-import { Customer } from '../types/accounts/customers/customer';
+import { AccountService } from '../account.service';
+import { Customer } from './customer';
 
 @Injectable({
   providedIn: 'root'
@@ -19,7 +19,7 @@ export class CustomerService {
       .collection(AccountService.path)
       .doc(accountID)
       .collection<Customer>(CustomerService.path)
-      .doc<Customer>('customer')
+      .doc<Customer>('_')
       .valueChanges();
   }
 

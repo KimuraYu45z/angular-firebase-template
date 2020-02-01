@@ -4,8 +4,8 @@ import {
   PaymentDialogComponent,
   PaymentDialogComponentData,
   PaymentDialogComponentResult
-} from '../../payment-dialog/payment-dialog.component';
-import { CONFIG, Config } from '../types/config';
+} from '../../../payment-dialog/payment-dialog.component';
+import { CONFIG, Config } from '../../types/config';
 
 @Injectable({
   providedIn: 'root'

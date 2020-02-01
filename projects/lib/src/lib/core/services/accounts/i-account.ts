@@ -1,5 +1,6 @@
 export interface IAccount {
   user_ids: string[];
+  admin_user_ids: string[];
   image_url: string;
   created_at: firebase.firestore.Timestamp;
   updated_at: firebase.firestore.Timestamp;

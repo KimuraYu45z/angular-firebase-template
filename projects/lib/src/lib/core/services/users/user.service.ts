@@ -3,18 +3,16 @@ import { AngularFireAuth } from '@angular/fire/auth';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { Observable, of } from 'rxjs';
 import * as firebase from 'firebase/app';
-import { isNotNull } from '../operators/is-not-null';
+import { isNotNull } from '../../operators/is-not-null';
 import { map, mergeMap } from 'rxjs/operators';
-import { IUser } from '../types/users/i-user';
-import { I_Account } from '../types/_accounts/i-_account';
-import { IAccount } from '../types/accounts/i-account';
-import { AccountService } from './account.service';
+import { IUser } from './i-user';
+import { IAccount } from '../accounts/i-account';
+import { AccountService } from '../accounts/account.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserService<
-  _Account extends I_Account,
   Account extends IAccount,
   User extends IUser
 > {
@@ -28,7 +26,7 @@ export class UserService<
   constructor(
     private auth: AngularFireAuth,
     private firestore: AngularFirestore,
-    private account: AccountService<_Account, Account>
+    private account: AccountService<Account>
   ) {
     this.authorized$ = this.auth.user.pipe(map(user => user !== null));
     this.userID$ = this.auth.user.pipe(map(user => (user ? user.uid : null)));
@@ -102,7 +100,6 @@ export class UserService<
    */
   async validateNewUser(
     credential: firebase.auth.UserCredential,
-    _accountFactory: (i_Account: I_Account) => _Account,
     accountFactory: (iAccount: IAccount) => Account,
     userFactory: (iuser: IUser) => User
   ) {
@@ -118,7 +115,6 @@ export class UserService<
           t,
           userID,
           (credential.user && credential.user.photoURL) || '',
-          _accountFactory,
           accountFactory
         );
 
@@ -139,7 +135,6 @@ export class UserService<
   async createNewAccount(
     userID: string,
     imageURL: string,
-    _accountFactory: (i_Account: I_Account) => _Account,
     accountFactory: (iAccount: IAccount) => Account
   ) {
     const now = firebase.firestore.FieldValue.serverTimestamp() as firebase.firestore.Timestamp;
@@ -148,7 +143,6 @@ export class UserService<
         t,
         userID,
         imageURL,
-        _accountFactory,
         accountFactory
       );
 

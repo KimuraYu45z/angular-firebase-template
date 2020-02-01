@@ -1,19 +1,16 @@
 import { Injectable } from '@angular/core';
-import { I_Account } from '../types/_accounts/i-_account';
-import { IAccount } from '../types/accounts/i-account';
+import { IAccount } from './i-account';
 import { AngularFirestore } from '@angular/fire/firestore';
-import { isNotNull } from '../operators/is-not-null';
+import { isNotNull } from '../../operators/is-not-null';
 import * as firebase from 'firebase/app';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AccountService<
-  _Account extends I_Account,
   Account extends IAccount
 > {
   static readonly path = 'accounts';
-  static readonly _path = '_accounts';
 
   constructor(private firestore: AngularFirestore) {}
 
@@ -25,18 +22,6 @@ export class AccountService<
     return this.firestore
       .collection<Account>(AccountService.path)
       .doc<Account>(accountID)
-      .valueChanges()
-      .pipe(isNotNull());
-  }
-
-  /**
-   *
-   * @param accountID
-   */
-  _account$(accountID: string) {
-    return this.firestore
-      .collection<_Account>(AccountService._path)
-      .doc<_Account>(accountID)
       .valueChanges()
       .pipe(isNotNull());
   }
@@ -70,7 +55,6 @@ export class AccountService<
    * @param transaction
    * @param userID
    * @param imageURL
-   * @param _accountFactory
    * @param accountFactory
    * @returns accountID
    */
@@ -78,25 +62,14 @@ export class AccountService<
     transaction: firebase.firestore.Transaction,
     userID: string,
     imageURL: string,
-    _accountFactory: (i_Account: I_Account) => _Account,
     accountFactory: (iAccount: IAccount) => Account
   ) {
     const now = firebase.firestore.FieldValue.serverTimestamp() as firebase.firestore.Timestamp;
     const accountID = this.firestore.createId();
 
-    const i_Account: I_Account = {
-      admin_user_ids: [userID],
-      updated_at: now
-    };
-    transaction.set(
-      this.firestore
-        .collection<_Account>(AccountService._path)
-        .doc<_Account>(accountID).ref,
-      _accountFactory(i_Account)
-    );
-
     const iAccount: IAccount = {
       user_ids: [userID],
+      admin_user_ids: [userID],
       image_url: imageURL,
       created_at: now,
       updated_at: now,
@@ -121,18 +94,6 @@ export class AccountService<
     await this.firestore
       .collection<Account>(AccountService.path)
       .doc<Account>(accountID)
-      .update(data);
-  }
-
-  /**
-   *
-   * @param accountID
-   * @param data
-   */
-  async _update(accountID: string, data: Partial<_Account>) {
-    await this.firestore
-      .collection<_Account>(AccountService._path)
-      .doc<_Account>(accountID)
       .update(data);
   }
 
