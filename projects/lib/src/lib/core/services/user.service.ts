@@ -5,9 +5,9 @@ import { Observable, of } from "rxjs";
 import * as firebase from "firebase/app";
 import { isNotNull } from "../operators/is-not-null";
 import { map, mergeMap } from "rxjs/operators";
-import { IUser } from "../types/i-user";
-import { I_Account } from "../types/i-_account";
-import { IAccount } from "../types/i-account";
+import { IUser } from "../types/users/i-user";
+import { I_Account } from "../types/_accounts/i-_account";
+import { IAccount } from "../types/accounts/i-account";
 import { AccountService } from "./account.service";
 
 @Injectable({
@@ -27,7 +27,8 @@ export class UserService<
 
   constructor(
     private auth: AngularFireAuth,
-    private firestore: AngularFirestore
+    private firestore: AngularFirestore,
+    private account: AccountService<_Account, Account>
   ) {
     this.authorized$ = this.auth.user.pipe(map(user => user !== null));
     this.userID$ = this.auth.user.pipe(map(user => (user ? user.uid : null)));
@@ -49,6 +50,18 @@ export class UserService<
       .doc<User>(userID)
       .valueChanges()
       .pipe(isNotNull());
+  }
+
+  /**
+   *
+   * @param userID
+   * @param user
+   */
+  async update(userID: string, data: Partial<User>) {
+    await this.firestore
+      .collection<User>(UserService.path)
+      .doc<User>(userID)
+      .update(data);
   }
 
   /**
@@ -100,30 +113,13 @@ export class UserService<
       const now = firebase.firestore.FieldValue.serverTimestamp() as firebase.firestore.Timestamp;
       await this.firestore.firestore.runTransaction(async t => {
         const userID = credential.user!.uid;
-        const accountID = this.firestore.createId();
 
-        const i_Account: I_Account = {
-          admin_user_ids: [userID],
-          updated_at: now
-        };
-        t.set(
-          this.firestore
-            .collection<_Account>(AccountService._path)
-            .doc(accountID).ref,
-          _accountFactory(i_Account)
-        );
-
-        const iAccount: IAccount = {
-          user_ids: [userID],
-          image_url: credential.user!.photoURL || "",
-          created_at: now,
-          updated_at: now,
-          selected_at: now
-        };
-        t.set(
-          this.firestore.collection<Account>(AccountService.path).doc(accountID)
-            .ref,
-          accountFactory(iAccount)
+        const accountID = this.account.createTransactionFactory(
+          t,
+          userID,
+          credential.user && credential.user.photoURL || "",
+          _accountFactory,
+          accountFactory
         );
 
         const iUser: IUser = {
@@ -138,6 +134,32 @@ export class UserService<
         );
       });
     }
+  }
+
+  async createNewAccount(
+    userID: string,
+    imageURL: string,
+    _accountFactory: (i_Account: I_Account) => _Account,
+    accountFactory: (iAccount: IAccount) => Account
+  ) {
+    const now = firebase.firestore.FieldValue.serverTimestamp() as firebase.firestore.Timestamp;
+    await this.firestore.firestore.runTransaction(async t => {
+      const accountID = this.account.createTransactionFactory(
+        t,
+        userID,
+        imageURL,
+        _accountFactory,
+        accountFactory
+      );
+
+      t.update(
+        this.firestore.collection<User>(UserService.path).doc<User>(userID).ref,
+        {
+          account_ids_order: firebase.firestore.FieldValue.arrayUnion(accountID),
+          updated_at: now
+        }
+      );
+    });
   }
 
   /**

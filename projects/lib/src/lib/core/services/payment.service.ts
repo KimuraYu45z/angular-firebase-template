@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
 import { AngularFirestore } from "@angular/fire/firestore";
 import { AngularFireFunctions } from "@angular/fire/functions";
-import { IPayment } from "../types/i-payment";
+import { IPayment } from "../types/payments/i-payment";
 
 @Injectable({
   providedIn: "root"
