@@ -23,4 +23,14 @@ export class StorageService {
         .catch(reason => reject(reason));
     });
   }
+
+  uploadString(path: string, data: string, format?: 'data_url') {
+    return new Promise<string | null>((resolve, reject) => {
+      this.fireStorage
+        .ref(path)
+        .putString(data, format)
+        .then(snapshot => resolve(snapshot.downloadURL))
+        .catch(reason => reject(reason));
+    });
+  }
 }
