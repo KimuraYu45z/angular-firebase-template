@@ -1,5 +1,5 @@
-import { filter } from "rxjs/operators";
-import { Observable } from "rxjs";
+import { filter } from 'rxjs/operators';
+import { Observable } from 'rxjs';
 
 function inputIsNotNull<T>(input: null | undefined | T): input is T {
   return input !== null && input !== undefined;

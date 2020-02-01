@@ -1,14 +1,14 @@
-import { Injectable, Inject } from "@angular/core";
-import { MatDialog } from "@angular/material";
+import { Injectable, Inject } from '@angular/core';
+import { MatDialog } from '@angular/material';
 import {
   PaymentDialogComponent,
   PaymentDialogComponentData,
   PaymentDialogComponentResult
-} from "../../payment-dialog/payment-dialog.component";
-import { CONFIG, Config } from "../types/config";
+} from '../../payment-dialog/payment-dialog.component';
+import { CONFIG, Config } from '../types/config';
 
 @Injectable({
-  providedIn: "root"
+  providedIn: 'root'
 })
 export class PaymentDialogService {
   constructor(
@@ -19,7 +19,7 @@ export class PaymentDialogService {
 
   open(currency: string, amount: number) {
     if (!this.config.stripe) {
-      throw Error("config.stripe is undefined");
+      throw Error('config.stripe is undefined');
     }
     return this.dialog.open<
       PaymentDialogComponent,

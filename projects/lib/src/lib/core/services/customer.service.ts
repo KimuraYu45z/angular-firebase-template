@@ -1,14 +1,14 @@
-import { Injectable } from "@angular/core";
-import { AngularFirestore } from "@angular/fire/firestore";
-import { AngularFireFunctions } from "@angular/fire/functions";
-import { AccountService } from "./account.service";
-import { Customer } from "../types/accounts/customers/customer";
+import { Injectable } from '@angular/core';
+import { AngularFirestore } from '@angular/fire/firestore';
+import { AngularFireFunctions } from '@angular/fire/functions';
+import { AccountService } from './account.service';
+import { Customer } from '../types/accounts/customers/customer';
 
 @Injectable({
-  providedIn: "root"
+  providedIn: 'root'
 })
 export class CustomerService {
-  static readonly path = "customers";
+  static readonly path = 'customers';
   constructor(
     private firestore: AngularFirestore,
     private functions: AngularFireFunctions
@@ -19,7 +19,7 @@ export class CustomerService {
       .collection(AccountService.path)
       .doc(accountID)
       .collection<Customer>(CustomerService.path)
-      .doc<Customer>("customer")
+      .doc<Customer>('customer')
       .valueChanges();
   }
 
@@ -30,7 +30,7 @@ export class CustomerService {
     is_test?: boolean
   ) {
     return await this.functions
-      .httpsCallable("payments_customers_create")({
+      .httpsCallable('payments_customers_create')({
         account_id,
         email,
         source,
@@ -46,7 +46,7 @@ export class CustomerService {
     is_test?: boolean
   ) {
     return await this.functions
-      .httpsCallable("payments_customers_update")({
+      .httpsCallable('payments_customers_update')({
         account_id,
         email,
         source,

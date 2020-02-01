@@ -1,15 +1,15 @@
-import { Component, OnInit, Inject } from "@angular/core";
-import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material";
-import { Observable, timer } from "rxjs";
+import { Component, OnInit, Inject } from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
+import { Observable, timer } from 'rxjs';
 
 export interface LoadingDialogComponentData {
   message$: Observable<string>;
 }
 
 @Component({
-  selector: "lib-loading-dialog",
-  templateUrl: "./loading-dialog.component.html",
-  styleUrls: ["./loading-dialog.component.css"]
+  selector: 'lib-loading-dialog',
+  templateUrl: './loading-dialog.component.html',
+  styleUrls: ['./loading-dialog.component.css']
 })
 export class LoadingDialogComponent implements OnInit {
   message$: Observable<string>;
@@ -23,7 +23,7 @@ export class LoadingDialogComponent implements OnInit {
     data: LoadingDialogComponentData
   ) {
     this.message$ = data.message$;
-    this.error = "";
+    this.error = '';
     this.isCompleted = false;
     this.progress = 0;
   }

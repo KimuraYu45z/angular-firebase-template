@@ -1,15 +1,13 @@
-import { Injectable } from "@angular/core";
-import { AngularFirestore } from "@angular/fire/firestore";
-import { AngularFireFunctions } from "@angular/fire/functions";
-import { IPayment } from "../types/payments/i-payment";
+import { Injectable } from '@angular/core';
+import { AngularFirestore } from '@angular/fire/firestore';
+import { AngularFireFunctions } from '@angular/fire/functions';
+import { IPayment } from '../types/payments/i-payment';
 
 @Injectable({
-  providedIn: "root"
+  providedIn: 'root'
 })
-export class PaymentService<
-  Payment extends IPayment
-> {
-  static readonly path = "payments";
+export class PaymentService<Payment extends IPayment> {
+  static readonly path = 'payments';
   constructor(
     private firestore: AngularFirestore,
     private functions: AngularFireFunctions
@@ -18,17 +16,17 @@ export class PaymentService<
   paymentsFrom$(accountID: string) {
     return this.firestore
       .collection<Payment>(PaymentService.path, ref =>
-        ref.where("from_account_id", "==", accountID)
+        ref.where('from_account_id', '==', accountID)
       )
-      .valueChanges({ idField: "id" });
+      .valueChanges({ idField: 'id' });
   }
 
   paymentsTo$(accountID: string) {
     return this.firestore
       .collection<Payment>(PaymentService.path, ref =>
-        ref.where("to_account_id", "==", accountID)
+        ref.where('to_account_id', '==', accountID)
       )
-      .valueChanges({ idField: "id" });
+      .valueChanges({ idField: 'id' });
   }
 
   async charge(
@@ -42,7 +40,7 @@ export class PaymentService<
     is_test?: boolean
   ) {
     return await this.functions
-      .httpsCallable("payments_charge")({
+      .httpsCallable('payments_charge')({
         amount,
         currency,
         description,

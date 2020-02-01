@@ -1,24 +1,24 @@
-import { Injectable } from "@angular/core";
-import { AngularFireAuth } from "@angular/fire/auth";
-import { AngularFirestore } from "@angular/fire/firestore";
-import { Observable, of } from "rxjs";
-import * as firebase from "firebase/app";
-import { isNotNull } from "../operators/is-not-null";
-import { map, mergeMap } from "rxjs/operators";
-import { IUser } from "../types/users/i-user";
-import { I_Account } from "../types/_accounts/i-_account";
-import { IAccount } from "../types/accounts/i-account";
-import { AccountService } from "./account.service";
+import { Injectable } from '@angular/core';
+import { AngularFireAuth } from '@angular/fire/auth';
+import { AngularFirestore } from '@angular/fire/firestore';
+import { Observable, of } from 'rxjs';
+import * as firebase from 'firebase/app';
+import { isNotNull } from '../operators/is-not-null';
+import { map, mergeMap } from 'rxjs/operators';
+import { IUser } from '../types/users/i-user';
+import { I_Account } from '../types/_accounts/i-_account';
+import { IAccount } from '../types/accounts/i-account';
+import { AccountService } from './account.service';
 
 @Injectable({
-  providedIn: "root"
+  providedIn: 'root'
 })
 export class UserService<
   _Account extends I_Account,
   Account extends IAccount,
   User extends IUser
 > {
-  static readonly path = "users";
+  static readonly path = 'users';
 
   authorized$: Observable<boolean>;
   userID$: Observable<string | null>;
@@ -83,7 +83,7 @@ export class UserService<
   ): Promise<firebase.auth.UserCredential>;
 
   async login(...args: any[]): Promise<firebase.auth.UserCredential> {
-    if (typeof args[0] === "string") {
+    if (typeof args[0] === 'string') {
       const [email, password] = args as [string, string];
 
       return await this.auth.auth.signInWithEmailAndPassword(email, password);
@@ -117,7 +117,7 @@ export class UserService<
         const accountID = this.account.createTransactionFactory(
           t,
           userID,
-          credential.user && credential.user.photoURL || "",
+          (credential.user && credential.user.photoURL) || '',
           _accountFactory,
           accountFactory
         );
@@ -155,7 +155,9 @@ export class UserService<
       t.update(
         this.firestore.collection<User>(UserService.path).doc<User>(userID).ref,
         {
-          account_ids_order: firebase.firestore.FieldValue.arrayUnion(accountID),
+          account_ids_order: firebase.firestore.FieldValue.arrayUnion(
+            accountID
+          ),
           updated_at: now
         }
       );

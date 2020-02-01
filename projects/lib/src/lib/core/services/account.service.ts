@@ -1,19 +1,19 @@
-import { Injectable } from "@angular/core";
-import { I_Account } from "../types/_accounts/i-_account";
-import { IAccount } from "../types/accounts/i-account";
-import { AngularFirestore } from "@angular/fire/firestore";
-import { isNotNull } from "../operators/is-not-null";
-import * as firebase from "firebase/app";
+import { Injectable } from '@angular/core';
+import { I_Account } from '../types/_accounts/i-_account';
+import { IAccount } from '../types/accounts/i-account';
+import { AngularFirestore } from '@angular/fire/firestore';
+import { isNotNull } from '../operators/is-not-null';
+import * as firebase from 'firebase/app';
 
 @Injectable({
-  providedIn: "root"
+  providedIn: 'root'
 })
 export class AccountService<
   _Account extends I_Account,
   Account extends IAccount
 > {
-  static readonly path = "accounts";
-  static readonly _path = "_accounts";
+  static readonly path = 'accounts';
+  static readonly _path = '_accounts';
 
   constructor(private firestore: AngularFirestore) {}
 
@@ -48,9 +48,9 @@ export class AccountService<
   accounts$(userID: string) {
     return this.firestore
       .collection<Account>(AccountService.path, ref =>
-        ref.where("user_ids", "array-contains", userID)
+        ref.where('user_ids', 'array-contains', userID)
       )
-      .valueChanges({ idField: "id" });
+      .valueChanges({ idField: 'id' });
   }
 
   /**
@@ -60,18 +60,18 @@ export class AccountService<
   accountsOfIDs$(accountIDs: string[]) {
     return this.firestore
       .collection<Account>(AccountService.path, ref =>
-        ref.where("_id", "in", accountIDs)
+        ref.where('_id', 'in', accountIDs)
       )
-      .valueChanges({ idField: "id" });
+      .valueChanges({ idField: 'id' });
   }
 
   /**
-   * 
-   * @param transaction 
-   * @param userID 
-   * @param imageURL 
-   * @param _accountFactory 
-   * @param accountFactory 
+   *
+   * @param transaction
+   * @param userID
+   * @param imageURL
+   * @param _accountFactory
+   * @param accountFactory
    * @returns accountID
    */
   createTransactionFactory(

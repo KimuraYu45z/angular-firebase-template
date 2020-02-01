@@ -1,13 +1,13 @@
-import { Directive, Input } from "@angular/core";
+import { Directive, Input } from '@angular/core';
 import {
   NG_VALIDATORS,
   Validator,
   AbstractControl,
   Validators
-} from "@angular/forms";
+} from '@angular/forms';
 
 @Directive({
-  selector: "[max]",
+  selector: '[max]',
   providers: [
     { provide: NG_VALIDATORS, useExisting: MaxDirective, multi: true }
   ]

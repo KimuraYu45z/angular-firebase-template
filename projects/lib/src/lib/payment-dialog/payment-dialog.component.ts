@@ -4,10 +4,10 @@ import {
   Inject,
   ViewChild,
   ElementRef
-} from "@angular/core";
-import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material";
-import { LoadingDialogService } from "../core";
-import { BehaviorSubject } from "rxjs";
+} from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
+import { LoadingDialogService } from '../core/services/loading-dialog.service';
+import { BehaviorSubject } from 'rxjs';
 
 export interface PaymentDialogComponentData {
   currency: string;
@@ -22,9 +22,9 @@ export interface PaymentDialogComponentResult {
 }
 
 @Component({
-  selector: "lib-payment-dialog",
-  templateUrl: "./payment-dialog.component.html",
-  styleUrls: ["./payment-dialog.component.css"]
+  selector: 'lib-payment-dialog',
+  templateUrl: './payment-dialog.component.html',
+  styleUrls: ['./payment-dialog.component.css']
 })
 export class PaymentDialogComponent implements OnInit {
   error?: stripe.Error;
@@ -33,7 +33,7 @@ export class PaymentDialogComponent implements OnInit {
   _elements!: stripe.elements.Elements;
   _card!: stripe.elements.Element;
 
-  @ViewChild("cardElement", { static: true })
+  @ViewChild('cardElement', { static: true })
   cardElement!: ElementRef;
 
   constructor(
@@ -47,33 +47,33 @@ export class PaymentDialogComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    if (!window.document.getElementById("stripe-script")) {
-      var s = window.document.createElement("script");
-      s.id = "stripe-script";
-      s.type = "text/javascript";
-      s.src = "https://js.stripe.com/v3/";
+    if (!window.document.getElementById('stripe-script')) {
+      var s = window.document.createElement('script');
+      s.id = 'stripe-script';
+      s.type = 'text/javascript';
+      s.src = 'https://js.stripe.com/v3/';
       window.document.body.appendChild(s);
     }
     this._stripe = Stripe(this.data.stripe.pk);
     this._elements = this._stripe.elements();
 
-    this._card = this._elements.create("card");
+    this._card = this._elements.create('card');
     this._card.mount(this.cardElement.nativeElement);
   }
 
   async onSubmit() {
     this.error = undefined;
 
-    const message$ = new BehaviorSubject("Processing");
+    const message$ = new BehaviorSubject('Processing');
     this.loadingDialog.open(message$);
 
     const { token, error } = await this._stripe.createToken(this._card);
 
     if (error) {
       this.error = error;
-      message$.error("Error");
+      message$.error('Error');
     } else {
-      message$.next("Complete");
+      message$.next('Complete');
       message$.complete();
 
       this.dialogRef.close({ token: token! });
