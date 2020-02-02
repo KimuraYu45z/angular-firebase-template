@@ -1,8 +1,7 @@
 import { Injectable, Inject } from '@angular/core';
 import { from } from 'rxjs';
 import { map } from 'rxjs/operators';
-import * as algoliasearch_ from 'algoliasearch';
-const algoliasearch = algoliasearch_;
+import * as algoliasearch from 'algoliasearch';
 import { CONFIG, Config } from '../types/config';
 
 @Injectable({
@@ -18,10 +17,18 @@ export class AlgoliaService {
     if (!this.config.algolia) {
       throw Error('config.alogolia is undefined');
     }
-    const client = algoliasearch(
+
+    const newAlgoliaClient: (
+      applicationId: string,
+      apiKey: string,
+      options?: algoliasearch.ClientOptions
+    ) => algoliasearch.Client = algoliasearch;
+    
+    const client = newAlgoliaClient(
       this.config.algolia['app_id'],
       this.config.algolia['search_api_key']
     );
+
     const index = client.initIndex(indexName);
     return from(index.search(params)).pipe(
       map(

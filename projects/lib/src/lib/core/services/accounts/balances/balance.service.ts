@@ -11,7 +11,7 @@ export class BalanceService {
 
   constructor(private firestore: AngularFirestore) {}
 
-  cusstomer$(accountID: string) {
+  balance$(accountID: string) {
     return this.firestore
       .collection(AccountService.path)
       .doc(accountID)
