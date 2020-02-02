@@ -7,9 +7,7 @@ import * as firebase from 'firebase/app';
 @Injectable({
   providedIn: 'root'
 })
-export class AccountService<
-  Account extends IAccount
-> {
+export class AccountService<Account extends IAccount> {
   static readonly path = 'accounts';
 
   constructor(private firestore: AngularFirestore) {}
@@ -42,12 +40,17 @@ export class AccountService<
    * 指定複数アカウントIDのアカウントを一括取得
    * @param accountIDs
    */
-  accountsOfIDs$(accountIDs: string[]) {
-    return this.firestore
-      .collection<Account>(AccountService.path, ref =>
-        ref.where('_id', 'in', accountIDs)
+  accountsOfIDs(accountIDs: string[]) {
+    return Promise.all(
+      accountIDs.map(accountID =>
+        this.firestore
+          .collection<Account>(AccountService.path)
+          .doc<Account>(accountID)
+          .get()
+          .toPromise()
+          .then(snapshot => snapshot.data() as Account)
       )
-      .valueChanges({ idField: 'id' });
+    );
   }
 
   /**
