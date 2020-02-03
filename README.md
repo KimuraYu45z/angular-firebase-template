@@ -1,27 +1,39 @@
 # AngularFirebaseTemplate
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 8.3.20.
+## Firestore Rules
 
-## Development server
+```JavaScript
+isInAccount(accountID) {
+  return request.auth.uid in get(/databases/$(database)/documents/accounts/$(accountID)).data["user_ids"];
+}
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+isInAccountAdmin(accountID) {
+  return request.auth.uid in get(/databases/$(database)/documents/accounts/$(accountID)).data["admin_user_ids"];
+}
 
-## Code scaffolding
+match /accounts/{accountID} {
+  allow read;
+  allow write: if isInAccountAdmin(accountID);
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+  match /balances/_ {
+    allow read: if isInAccount(accountID);
+  }
 
-## Build
+  match /customers/_ {
+    allow read: if isInAccount(accountID);
+  }
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
+  match /payments/_ {
+    allow read: if isInAccount(accountID);
+  }
+}
 
-## Running unit tests
+match /transactions/{transactionID} {
+  allow read: if isInAccount(resource.data["from_account_id"]) || isInAccount(resource.data["to_account_id"]);
+}
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
-
-## Running end-to-end tests
-
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
-
-## Further help
-
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
+match /users/{userID} {
+  allow read;
+  allow write: if request.auth.uid == userID;
+}
+```
