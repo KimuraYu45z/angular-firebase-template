@@ -13,7 +13,7 @@ export class AlgoliaService {
     private config: Config
   ) {}
 
-  search$<T>(indexName: string, params: algoliasearch.QueryParameters) {
+  search<T>(indexName: string, params: algoliasearch.QueryParameters) {
     if (!this.config.algolia) {
       throw Error('config.alogolia is undefined');
     }
@@ -23,20 +23,19 @@ export class AlgoliaService {
       apiKey: string,
       options?: algoliasearch.ClientOptions
     ) => algoliasearch.Client = algoliasearch;
-    
+
     const client = newAlgoliaClient(
       this.config.algolia['app_id'],
       this.config.algolia['search_api_key']
     );
 
     const index = client.initIndex(indexName);
-    return from(index.search(params)).pipe(
-      map(
-        res =>
-          res.hits as ({
-            objectID: string;
-          } & T)[]
+    return index.search(params).then(res => ({
+      total: res.nbHits,
+      hits: res.hits.map(
+        ({ objectID, ...data }) =>
+          ({ ...data, id: objectID } as T & { id: string })
       )
-    );
+    }));
   }
 }
