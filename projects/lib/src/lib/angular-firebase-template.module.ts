@@ -17,7 +17,12 @@ import { Config, CONFIG } from './core/types/config';
     PaymentDialogComponent
   ],
   imports: [CommonModule, FormsModule, FlexLayoutModule, MaterialModule],
-  exports: [LoadingDialogComponent, PaymentDialogComponent]
+  exports: [
+    MinDirective,
+    MaxDirective,
+    LoadingDialogComponent,
+    PaymentDialogComponent
+  ]
 })
 export class AngularFirebaseTemplateModule {
   static forRoot(config: Config): ModuleWithProviders {
