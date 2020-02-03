@@ -3,11 +3,11 @@
 ## Firestore Rules
 
 ```JavaScript
-isInAccount(accountID) {
+function isInAccount(accountID) {
   return request.auth.uid in get(/databases/$(database)/documents/accounts/$(accountID)).data["user_ids"];
 }
 
-isInAccountAdmin(accountID) {
+function isInAccountAdmin(accountID) {
   return request.auth.uid in get(/databases/$(database)/documents/accounts/$(accountID)).data["admin_user_ids"];
 }
 
