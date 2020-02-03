@@ -13,7 +13,8 @@ function isInAccountAdmin(accountID) {
 
 match /accounts/{accountID} {
   allow read;
-  allow write: if isInAccountAdmin(accountID);
+  allow create: if request.auth.uid in request.resource.data["admin_user_ids"];
+  allow update: if isInAccountAdmin(accountID);
 
   match /balances/_ {
     allow read: if isInAccount(accountID);
