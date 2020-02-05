@@ -9,7 +9,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 import { LoadingDialogService } from '../core/services/loading-dialog.service';
 import { BehaviorSubject } from 'rxjs';
 
-export interface PaymentDialogComponentData {
+export type PaymentDialogComponentData = {
   currency: string;
   amount: number;
   stripe: {
@@ -17,7 +17,7 @@ export interface PaymentDialogComponentData {
   };
 }
 
-export interface PaymentDialogComponentResult {
+export type PaymentDialogComponentResult = {
   token: stripe.Token;
 }
 

@@ -2,7 +2,7 @@ import { Component, OnInit, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 import { Observable, timer } from 'rxjs';
 
-export interface LoadingDialogComponentData {
+export type LoadingDialogComponentData = {
   message$: Observable<string>;
 }
 

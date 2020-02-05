@@ -1,4 +1,4 @@
-export interface ChargeData {
+export type ChargeData = {
   account_id: string;
   amount: number;
   currency: string;

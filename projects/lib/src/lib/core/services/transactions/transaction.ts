@@ -1,4 +1,4 @@
-export interface Transaction {
+export type Transaction = {
   from_account_id: string;
   to_account_id: string;
   denom: string;
