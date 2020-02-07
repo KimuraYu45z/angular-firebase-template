@@ -1,15 +1,14 @@
 {
   "name": "angular-firebase-template",
-  "version": "0.1.9",
+  "version": "0.2.0",
   "peerDependencies": {
     "@angular/common": "^9.0.0",
     "@angular/core": "^9.0.0",
     "@angular/fire": "^5.3.0",
     "@angular/flex-layout": "^9.0.0-beta.29",
     "@angular/material": "^9.0.0",
-    "algoliasearch": "^3.35.1",
+    "algoliasearch": "^4.0.1",
     "firebase": "^7.7.0",
-    "@types/algoliasearch": "^3.34.10",
     "@types/stripe-v3": "^3.1.14"
   }
 }

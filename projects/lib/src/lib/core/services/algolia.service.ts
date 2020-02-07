@@ -1,41 +1,35 @@
 import { Injectable, Inject } from '@angular/core';
-import { from } from 'rxjs';
-import { map } from 'rxjs/operators';
-import * as algoliasearch from 'algoliasearch';
+import algoliasearch, { AlgoliaSearchOptions } from 'algoliasearch';
 import { CONFIG, Config } from '../types/config';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AlgoliaService {
   constructor(
     @Inject(CONFIG)
-    private config: Config
+    private config: Config,
   ) {}
 
-  search<T>(indexName: string, params: algoliasearch.QueryParameters) {
+  async search<T>(
+    indexName: string,
+    query: string,
+    options: AlgoliaSearchOptions,
+  ) {
     if (!this.config.algolia) {
       throw Error('config.alogolia is undefined');
     }
 
-    const newAlgoliaClient: (
-      applicationId: string,
-      apiKey: string,
-      options?: algoliasearch.ClientOptions
-    ) => algoliasearch.Client = algoliasearch;
-
-    const client = newAlgoliaClient(
+    const client = algoliasearch(
       this.config.algolia['app_id'],
-      this.config.algolia['search_api_key']
+      this.config.algolia['search_api_key'],
     );
 
     const index = client.initIndex(indexName);
-    return index.search(params).then(res => ({
+    const res = await index.search<T>(query, options);
+    return {
       total: res.nbHits,
-      hits: res.hits.map(
-        ({ objectID, ...data }) =>
-          ({ ...data, id: objectID } as T & { id: string })
-      )
-    }));
+      hits: res.hits,
+    };
   }
 }
