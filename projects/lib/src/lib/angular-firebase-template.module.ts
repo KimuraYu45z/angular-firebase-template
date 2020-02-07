@@ -25,7 +25,7 @@ import { Config, CONFIG } from './core/types/config';
   ]
 })
 export class AngularFirebaseTemplateModule {
-  static forRoot(config: Config): ModuleWithProviders {
+  static forRoot(config: Config): ModuleWithProviders<AngularFirebaseTemplateModule> {
     return {
       ngModule: AngularFirebaseTemplateModule,
       providers: [{ provide: CONFIG, useValue: config }]
