@@ -1,15 +1,16 @@
 import { Component, OnInit, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Observable, timer } from 'rxjs';
 
 export type LoadingDialogComponentData = {
   message$: Observable<string>;
-}
+};
 
+// @dynamic
 @Component({
   selector: 'lib-loading-dialog',
   templateUrl: './loading-dialog.component.html',
-  styleUrls: ['./loading-dialog.component.css']
+  styleUrls: ['./loading-dialog.component.css'],
 })
 export class LoadingDialogComponent implements OnInit {
   message$: Observable<string>;
@@ -20,7 +21,7 @@ export class LoadingDialogComponent implements OnInit {
   constructor(
     private dialogRef: MatDialogRef<LoadingDialogComponent>,
     @Inject(MAT_DIALOG_DATA)
-    data: LoadingDialogComponentData
+    data: LoadingDialogComponentData,
   ) {
     this.message$ = data.message$;
     this.error = '';
@@ -31,7 +32,7 @@ export class LoadingDialogComponent implements OnInit {
   ngOnInit() {
     this.message$.subscribe(
       undefined,
-      async error => {
+      async (error) => {
         this.error = error.toString();
 
         await this.closeDialog();
@@ -40,7 +41,7 @@ export class LoadingDialogComponent implements OnInit {
         this.isCompleted = true;
 
         await this.closeDialog();
-      }
+      },
     );
   }
 

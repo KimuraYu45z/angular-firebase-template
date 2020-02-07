@@ -5,7 +5,7 @@ import {
   ViewChild,
   ElementRef
 } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { LoadingDialogService } from '../core/services/loading-dialog.service';
 import { BehaviorSubject } from 'rxjs';
 
@@ -21,6 +21,7 @@ export type PaymentDialogComponentResult = {
   token: stripe.Token;
 }
 
+// @dynamic
 @Component({
   selector: 'lib-payment-dialog',
   templateUrl: './payment-dialog.component.html',
