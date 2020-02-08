@@ -8,20 +8,23 @@ import { MaxDirective } from './core/directives/max.directive';
 import { LoadingDialogComponent } from './loading-dialog/loading-dialog.component';
 import { PaymentDialogComponent } from './payment-dialog/payment-dialog.component';
 import { Config, CONFIG } from './core/types/config';
+import { RippleCardComponent } from './ripple-card/ripple-card.component';
 
 @NgModule({
   declarations: [
     MinDirective,
     MaxDirective,
     LoadingDialogComponent,
-    PaymentDialogComponent
+    PaymentDialogComponent,
+    RippleCardComponent
   ],
   imports: [CommonModule, FormsModule, FlexLayoutModule, MaterialModule],
   exports: [
     MinDirective,
     MaxDirective,
     LoadingDialogComponent,
-    PaymentDialogComponent
+    PaymentDialogComponent,
+    RippleCardComponent
   ]
 })
 export class AngularFirebaseTemplateModule {

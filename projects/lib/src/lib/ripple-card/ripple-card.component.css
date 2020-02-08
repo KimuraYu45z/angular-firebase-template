@@ -1,0 +1,8 @@
+.mat-card {
+  overflow: hidden;
+}
+
+.card-inner {
+  margin: -16px !important;
+  padding: 16px;
+}
