@@ -5,20 +5,21 @@ import { AngularFireFunctions } from '@angular/fire/functions';
 import { ChargeData } from '../../../types/charge-data';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class PaymentService {
-  static readonly path = 'payments';
+  static readonly collectionPath = 'payments';
+
   constructor(
     private firestore: AngularFirestore,
-    private functions: AngularFireFunctions
+    private functions: AngularFireFunctions,
   ) {}
 
   payments$(accountID: string) {
     return this.firestore
-      .collection(PaymentService.path)
+      .collection(PaymentService.collectionPath)
       .doc(accountID)
-      .collection<Payment>(PaymentService.path)
+      .collection<Payment>(PaymentService.collectionPath)
       .valueChanges();
   }
 

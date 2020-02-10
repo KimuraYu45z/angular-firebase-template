@@ -4,19 +4,20 @@ import { AccountService } from '../account.service';
 import { Balance } from './balance';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class BalanceService {
-  static readonly path = 'balances';
+  static readonly collectionPath = 'balances';
+  static readonly documentID = 'balance';
 
   constructor(private firestore: AngularFirestore) {}
 
   balance$(accountID: string) {
     return this.firestore
-      .collection(AccountService.path)
+      .collection(AccountService.collectionPath)
       .doc(accountID)
-      .collection<Balance>(BalanceService.path)
-      .doc<Balance>('_')
+      .collection<Balance>(BalanceService.collectionPath)
+      .doc<Balance>(BalanceService.documentID)
       .valueChanges();
   }
 }

@@ -5,21 +5,23 @@ import { AccountService } from '../account.service';
 import { Customer } from './customer';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class CustomerService {
-  static readonly path = 'customers';
+  static readonly collectionPath = 'customers';
+  static readonly documentID = 'customer';
+
   constructor(
     private firestore: AngularFirestore,
-    private functions: AngularFireFunctions
+    private functions: AngularFireFunctions,
   ) {}
 
   cusstomer$(accountID: string) {
     return this.firestore
-      .collection(AccountService.path)
+      .collection(AccountService.collectionPath)
       .doc(accountID)
-      .collection<Customer>(CustomerService.path)
-      .doc<Customer>('_')
+      .collection<Customer>(CustomerService.collectionPath)
+      .doc<Customer>(CustomerService.documentID)
       .valueChanges();
   }
 
@@ -27,14 +29,14 @@ export class CustomerService {
     account_id: string,
     email: string,
     source: string,
-    is_test?: boolean
+    is_test?: boolean,
   ) {
     return await this.functions
       .httpsCallable('payments_customers_create')({
         account_id,
         email,
         source,
-        is_test
+        is_test,
       })
       .toPromise();
   }
@@ -43,14 +45,14 @@ export class CustomerService {
     account_id: string,
     email?: string,
     source?: string,
-    is_test?: boolean
+    is_test?: boolean,
   ) {
     return await this.functions
       .httpsCallable('payments_customers_update')({
         account_id,
         email,
         source,
-        is_test
+        is_test,
       })
       .toPromise();
   }

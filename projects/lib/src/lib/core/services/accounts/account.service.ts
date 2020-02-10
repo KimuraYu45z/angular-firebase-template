@@ -9,7 +9,7 @@ import { AngularFireFunctions } from '@angular/fire/functions';
   providedIn: 'root',
 })
 export class AccountService<Account extends IAccount> {
-  static readonly path = 'accounts';
+  static readonly collectionPath = 'accounts';
 
   constructor(
     private firestore: AngularFirestore,
@@ -22,7 +22,7 @@ export class AccountService<Account extends IAccount> {
    */
   account$(accountID: string) {
     return this.firestore
-      .collection<Account>(AccountService.path)
+      .collection<Account>(AccountService.collectionPath)
       .doc<Account>(accountID)
       .valueChanges()
       .pipe(isNotNull());
@@ -34,7 +34,7 @@ export class AccountService<Account extends IAccount> {
    */
   accounts$(userID: string) {
     return this.firestore
-      .collection<Account>(AccountService.path, (ref) =>
+      .collection<Account>(AccountService.collectionPath, (ref) =>
         ref.where('user_ids', 'array-contains', userID),
       )
       .valueChanges({ idField: 'id' });
@@ -48,7 +48,7 @@ export class AccountService<Account extends IAccount> {
     return Promise.all(
       accountIDs.map((accountID) =>
         this.firestore
-          .collection<Account>(AccountService.path)
+          .collection<Account>(AccountService.collectionPath)
           .doc<Account>(accountID)
           .get()
           .toPromise()
@@ -84,7 +84,7 @@ export class AccountService<Account extends IAccount> {
     };
     transaction.set(
       this.firestore
-        .collection<Account>(AccountService.path)
+        .collection<Account>(AccountService.collectionPath)
         .doc<Account>(accountID).ref,
       accountFactory(iAccount),
     );
@@ -99,7 +99,7 @@ export class AccountService<Account extends IAccount> {
    */
   async update(accountID: string, data: Partial<Account>) {
     await this.firestore
-      .collection<Account>(AccountService.path)
+      .collection<Account>(AccountService.collectionPath)
       .doc<Account>(accountID)
       .update(data);
   }
@@ -109,7 +109,7 @@ export class AccountService<Account extends IAccount> {
    * @param accountID
    */
   getImagePath(accountID: string) {
-    return `${AccountService.path}/${accountID}/image.jpg`;
+    return `${AccountService.collectionPath}/${accountID}/image.jpg`;
   }
 
   /**
