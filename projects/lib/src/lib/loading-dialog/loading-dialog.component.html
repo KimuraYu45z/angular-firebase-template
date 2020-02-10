@@ -1,6 +1,6 @@
 <mat-dialog-content class="dialog">
   <div fxLayout="row" fxLayoutAlign="center center">
-    <div fxFlex="60px">
+    <div fxFlex="60px" style="height: 60px; overflow: hidden;">
       <ng-container *ngIf="isCompleted || error; else isNotCompleted">
         <mat-progress-spinner
           [diameter]="60"
