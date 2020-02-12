@@ -4,6 +4,7 @@ import { AngularFirestore } from '@angular/fire/firestore';
 import { isNotNull } from '../../operators/is-not-null';
 import * as firebase from 'firebase/app';
 import { AngularFireFunctions } from '@angular/fire/functions';
+import { UserRecord } from './user-record';
 
 @Injectable({
   providedIn: 'root',
@@ -121,31 +122,6 @@ export class AccountService<Account extends IAccount> {
       .httpsCallable('account_get_users')({
         account_id: accountID,
       })
-      .toPromise<{
-        uid: string;
-        email?: string;
-        emailVerified: boolean;
-        displayName?: string;
-        phoneNumber?: string;
-        photoURL?: string;
-        disabled: boolean;
-        metadata: {
-          lastSignInTime: string;
-          creationTime: string;
-        };
-        providerData: {
-          uid: string;
-          displayName: string;
-          email: string;
-          phoneNumber: string;
-          photoURL: string;
-          providerId: string;
-        }[];
-        passwordHash?: string;
-        passwordSalt?: string;
-        customClaims?: Object;
-        tokensValidAfterTime?: string;
-        tenantId?: string | null;
-      }>();
+      .toPromise<UserRecord[]>();
   }
 }
