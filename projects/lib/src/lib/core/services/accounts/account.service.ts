@@ -70,15 +70,11 @@ export class AccountService<Account extends IAccount> {
     userID: string,
     accountFactory: (iAccount: IAccount) => Account,
   ) {
-    const now = firebase.firestore.FieldValue.serverTimestamp() as firebase.firestore.Timestamp;
     const accountID = this.firestore.createId();
 
     const iAccount: IAccount = {
       user_ids: [userID],
       admin_user_ids: [userID],
-      created_at: now,
-      updated_at: now,
-      selected_at: now,
     };
     transaction.set(
       this.firestore

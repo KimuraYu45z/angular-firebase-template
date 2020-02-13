@@ -32,7 +32,7 @@ export class CustomerService {
     is_test?: boolean,
   ) {
     return await this.functions
-      .httpsCallable('payments_customers_create')({
+      .httpsCallable('payment_customer_create')({
         account_id,
         email,
         source,
@@ -48,7 +48,7 @@ export class CustomerService {
     is_test?: boolean,
   ) {
     return await this.functions
-      .httpsCallable('payments_customers_update')({
+      .httpsCallable('payment_customer_update')({
         account_id,
         email,
         source,

@@ -53,6 +53,18 @@ export class UserService<Account extends IAccount, User extends IUser> {
   }
 
   /**
+   * 
+   * @param userID 
+   * @param data 
+   */
+  async update(userID: string, data: Partial<User>) {
+    await this.firestore
+      .collection<User>(UserService.collectionPath)
+      .doc<User>(userID)
+      .update(data);
+  }
+
+  /**
    *
    * @param userFactory
    * @param accountFactory
@@ -114,7 +126,6 @@ export class UserService<Account extends IAccount, User extends IUser> {
         const iUser: IUser = {
           selected_account_id: accountID,
           account_ids_order: [accountID],
-          updated_at: now,
         };
         t.set(
           this.firestore
