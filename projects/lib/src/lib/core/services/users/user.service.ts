@@ -3,7 +3,6 @@ import { AngularFireAuth } from '@angular/fire/auth';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { Observable, of } from 'rxjs';
 import * as firebase from 'firebase/app';
-import { isNotNull } from '../../operators/is-not-null';
 import { map, mergeMap } from 'rxjs/operators';
 import { IUser } from './i-user';
 import { IAccount } from '../accounts/i-account';
@@ -28,7 +27,13 @@ export class UserService<Account extends IAccount, User extends IUser> {
     this.authorized$ = this.auth.user.pipe(map((user) => user !== null));
     this.userID$ = this.auth.user.pipe(map((user) => (user ? user.uid : null)));
     this.currentUser$ = this.userID$.pipe(
-      mergeMap((userID) => (userID ? this.user$(userID) : of(null))),
+      mergeMap((userID) =>
+        userID
+          ? this.user$(userID).pipe(
+              map((user) => (user !== undefined ? user : null)),
+            )
+          : of(null),
+      ),
     );
     this.selectedAccountID$ = this.currentUser$.pipe(
       map((user) => (user ? user.selected_account_id : null)),
@@ -44,62 +49,54 @@ export class UserService<Account extends IAccount, User extends IUser> {
       .collection<User>(UserService.collectionPath)
       .doc<User>(userID)
       .valueChanges()
-      .pipe(isNotNull());
+      .pipe();
   }
 
   /**
    *
-   * @param userID
-   * @param user
-   */
-  async update(userID: string, data: Partial<User>) {
-    await this.firestore
-      .collection<User>(UserService.collectionPath)
-      .doc<User>(userID)
-      .update(data);
-  }
-
-  /**
-   *
+   * @param userFactory
+   * @param accountFactory
    * @param email
    * @param password
    */
-  async login(
+  async signUp(
+    userFactory: (iuser: IUser) => User,
+    accountFactory: (iAccount: IAccount) => Account,
     email: string,
     password: string,
   ): Promise<firebase.auth.UserCredential>;
 
   /**
    *
+   * @param userFactory
+   * @param accountFactory
    * @param provider
    */
-  async login(
+  async signUp(
+    userFactory: (iuser: IUser) => User,
+    accountFactory: (iAccount: IAccount) => Account,
     provider: firebase.auth.AuthProvider,
   ): Promise<firebase.auth.UserCredential>;
 
-  async login(...args: any[]): Promise<firebase.auth.UserCredential> {
+  async signUp(
+    userFactory: (iuser: IUser) => User,
+    accountFactory: (iAccount: IAccount) => Account,
+    ...args: any[]
+  ): Promise<firebase.auth.UserCredential> {
+    let credential: firebase.auth.UserCredential;
+
     if (typeof args[0] === 'string') {
       const [email, password] = args as [string, string];
 
-      return await this.auth.auth.signInWithEmailAndPassword(email, password);
+      credential = await this.auth.auth.createUserWithEmailAndPassword(
+        email,
+        password,
+      );
     } else {
       const [provider] = args as [firebase.auth.AuthProvider];
-      return await this.auth.auth.signInWithPopup(provider);
+      credential = await this.auth.auth.signInWithPopup(provider);
     }
-  }
 
-  /**
-   *
-   * @param credential
-   * @param _accountFactory
-   * @param accountFactory
-   * @param userFactory
-   */
-  async validateNewUser(
-    credential: firebase.auth.UserCredential,
-    accountFactory: (iAccount: IAccount) => Account,
-    userFactory: (iuser: IUser) => User,
-  ) {
     if (
       credential.additionalUserInfo &&
       credential.additionalUserInfo.isNewUser
@@ -108,10 +105,9 @@ export class UserService<Account extends IAccount, User extends IUser> {
       await this.firestore.firestore.runTransaction(async (t) => {
         const userID = credential.user!.uid;
 
-        const accountID = this.account.createTransactionFactory(
+        const accountID = this.account.pipeCreateTransaction(
           t,
           userID,
-          (credential.user && credential.user.photoURL) || '',
           accountFactory,
         );
 
@@ -128,19 +124,79 @@ export class UserService<Account extends IAccount, User extends IUser> {
         );
       });
     }
+
+    return credential;
   }
 
+  /**
+   *
+   * @param userFactory
+   * @param accountFactory
+   * @param email
+   * @param password
+   */
+  async signIn(
+    email: string,
+    password: string,
+  ): Promise<firebase.auth.UserCredential>;
+
+  /**
+   *
+   * @param userFactory
+   * @param accountFactory
+   * @param provider
+   */
+  async signIn(
+    provider: firebase.auth.AuthProvider,
+  ): Promise<firebase.auth.UserCredential>;
+
+  async signIn(...args: any[]): Promise<firebase.auth.UserCredential> {
+    let credential: firebase.auth.UserCredential;
+
+    if (typeof args[0] === 'string') {
+      const [email, password] = args as [string, string];
+
+      credential = await this.auth.auth.signInWithEmailAndPassword(
+        email,
+        password,
+      );
+    } else {
+      const [provider] = args as [firebase.auth.AuthProvider];
+      credential = await this.auth.auth.signInWithPopup(provider);
+    }
+
+    if (
+      credential.additionalUserInfo &&
+      credential.additionalUserInfo.isNewUser
+    ) {
+      await this.auth.auth.currentUser!.delete();
+      throw Error('user not found');
+    }
+
+    return credential;
+  }
+
+  /**
+   *
+   */
+  async signOut() {
+    await this.auth.auth.signOut();
+  }
+
+  /**
+   *
+   * @param userID
+   * @param accountFactory
+   */
   async createNewAccount(
     userID: string,
-    imageURL: string,
     accountFactory: (iAccount: IAccount) => Account,
   ) {
     const now = firebase.firestore.FieldValue.serverTimestamp() as firebase.firestore.Timestamp;
     await this.firestore.firestore.runTransaction(async (t) => {
-      const accountID = this.account.createTransactionFactory(
+      const accountID = this.account.pipeCreateTransaction(
         t,
         userID,
-        imageURL,
         accountFactory,
       );
 
@@ -156,24 +212,5 @@ export class UserService<Account extends IAccount, User extends IUser> {
         },
       );
     });
-  }
-
-  /**
-   *
-   */
-  async logout() {
-    await this.auth.auth.signOut();
-  }
-
-  /**
-   *
-   * @param firebaseUser
-   * @param type
-   */
-  async link(
-    firebaseUser: firebase.User,
-    provider: firebase.auth.AuthProvider,
-  ) {
-    return await firebaseUser.linkWithPopup(provider);
   }
 }

@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { IAccount } from './i-account';
 import { AngularFirestore } from '@angular/fire/firestore';
-import { isNotNull } from '../../operators/is-not-null';
 import * as firebase from 'firebase/app';
 import { AngularFireFunctions } from '@angular/fire/functions';
 import { UserRecord } from './user-record';
@@ -26,7 +25,7 @@ export class AccountService<Account extends IAccount> {
       .collection<Account>(AccountService.collectionPath)
       .doc<Account>(accountID)
       .valueChanges()
-      .pipe(isNotNull());
+      .pipe();
   }
 
   /**
@@ -66,10 +65,9 @@ export class AccountService<Account extends IAccount> {
    * @param accountFactory
    * @returns accountID
    */
-  createTransactionFactory(
+  pipeCreateTransaction(
     transaction: firebase.firestore.Transaction,
     userID: string,
-    imageURL: string,
     accountFactory: (iAccount: IAccount) => Account,
   ) {
     const now = firebase.firestore.FieldValue.serverTimestamp() as firebase.firestore.Timestamp;
@@ -78,7 +76,6 @@ export class AccountService<Account extends IAccount> {
     const iAccount: IAccount = {
       user_ids: [userID],
       admin_user_ids: [userID],
-      image_url: imageURL,
       created_at: now,
       updated_at: now,
       selected_at: now,
@@ -123,5 +120,19 @@ export class AccountService<Account extends IAccount> {
         account_id: accountID,
       })
       .toPromise<UserRecord[]>();
+  }
+
+  /**
+   *
+   * @param accountID
+   * @param userID
+   */
+  async removeUser(accountID: string, userID: string) {
+    return await this.functions
+      .httpsCallable('account_remove_user')({
+        account_id: accountID,
+        user_id: userID,
+      })
+      .toPromise<void>();
   }
 }
