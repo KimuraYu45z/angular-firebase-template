@@ -44,7 +44,7 @@ export class PaymentFormComponent implements OnInit {
     this._stripe = Stripe(this.config.stripe!.pk);
     this._elements = this._stripe.elements();
 
-    this._card = this._elements.create('card');
+    this._card = this._elements.create('card', { hidePostalCode: true });
     this._card.mount(this.cardElement.nativeElement);
   }
 
