@@ -33,14 +33,6 @@ export class PaymentFormComponent implements OnInit {
   }
 
   ngOnInit() {
-    if (!window.document.getElementById('stripe-script')) {
-      var s = window.document.createElement('script');
-      s.id = 'stripe-script';
-      s.type = 'text/javascript';
-      s.src = 'https://js.stripe.com/v3/';
-      window.document.body.appendChild(s);
-    }
-
     this._stripe = Stripe(this.config.stripe!.pk);
     this._elements = this._stripe.elements();
 
