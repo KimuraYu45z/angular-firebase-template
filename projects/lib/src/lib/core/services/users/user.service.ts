@@ -7,6 +7,10 @@ import { map, mergeMap } from 'rxjs/operators';
 import { IUser } from './i-user';
 import { IAccount } from '../accounts/i-account';
 import { AccountService } from '../accounts/account.service';
+import {
+  ErrorUnExistingUserSignIn,
+  ErrorExistingUserSignUp,
+} from '../../types';
 
 @Injectable({
   providedIn: 'root',
@@ -53,9 +57,9 @@ export class UserService<Account extends IAccount, User extends IUser> {
   }
 
   /**
-   * 
-   * @param userID 
-   * @param data 
+   *
+   * @param userID
+   * @param data
    */
   async update(userID: string, data: Partial<User>) {
     await this.firestore
@@ -113,7 +117,6 @@ export class UserService<Account extends IAccount, User extends IUser> {
       credential.additionalUserInfo &&
       credential.additionalUserInfo.isNewUser
     ) {
-      const now = firebase.firestore.FieldValue.serverTimestamp() as firebase.firestore.Timestamp;
       await this.firestore.firestore.runTransaction(async (t) => {
         const userID = credential.user!.uid;
 
@@ -134,6 +137,9 @@ export class UserService<Account extends IAccount, User extends IUser> {
           userFactory(iUser),
         );
       });
+    } else {
+      await this.signOut();
+      throw new ErrorExistingUserSignUp();
     }
 
     return credential;
@@ -181,7 +187,7 @@ export class UserService<Account extends IAccount, User extends IUser> {
       credential.additionalUserInfo.isNewUser
     ) {
       await this.auth.auth.currentUser!.delete();
-      throw Error('user not found');
+      throw new ErrorUnExistingUserSignIn();
     }
 
     return credential;
