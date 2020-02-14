@@ -16,7 +16,7 @@
         ></mat-progress-spinner>
       </ng-template>
     </div>
-    <p style="flex: 1 1 auto;" fxFlexOffset="16px">
+    <p fxFlex="1 1 auto" style="margin: 16px;">
       {{ error ? error : (message$ | async) }}
     </p>
   </div>

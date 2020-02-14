@@ -4,7 +4,6 @@ export * from './accounts/balances/balance.service';
 export * from './accounts/balances/balance';
 export * from './accounts/customers/customer.service';
 export * from './accounts/customers/customer';
-export * from './accounts/payments/payment-dialog.service';
 export * from './accounts/payments/payment.service';
 export * from './accounts/payments/payment';
 export * from './accounts/payments/subscriptions/subscription.service';

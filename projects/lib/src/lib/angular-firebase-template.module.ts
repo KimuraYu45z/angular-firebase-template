@@ -6,32 +6,31 @@ import { MaterialModule } from './core/modules/material/material.module';
 import { MinDirective } from './core/directives/min.directive';
 import { MaxDirective } from './core/directives/max.directive';
 import { LoadingDialogComponent } from './loading-dialog/loading-dialog.component';
-import { PaymentDialogComponent } from './payment-dialog/payment-dialog.component';
 import { Config, CONFIG } from './core/types/config';
-import { RippleCardComponent } from './ripple-card/ripple-card.component';
+import { PaymentFormComponent } from './payment-form/payment-form.component';
 
 @NgModule({
   declarations: [
     MinDirective,
     MaxDirective,
     LoadingDialogComponent,
-    PaymentDialogComponent,
-    RippleCardComponent
+    PaymentFormComponent,
   ],
   imports: [CommonModule, FormsModule, FlexLayoutModule, MaterialModule],
   exports: [
     MinDirective,
     MaxDirective,
     LoadingDialogComponent,
-    PaymentDialogComponent,
-    RippleCardComponent
-  ]
+    PaymentFormComponent,
+  ],
 })
 export class AngularFirebaseTemplateModule {
-  static forRoot(config: Config): ModuleWithProviders<AngularFirebaseTemplateModule> {
+  static forRoot(
+    config: Config,
+  ): ModuleWithProviders<AngularFirebaseTemplateModule> {
     return {
       ngModule: AngularFirebaseTemplateModule,
-      providers: [{ provide: CONFIG, useValue: config }]
+      providers: [{ provide: CONFIG, useValue: config }],
     };
   }
 }

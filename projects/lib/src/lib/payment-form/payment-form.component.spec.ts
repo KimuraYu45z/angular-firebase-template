@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { RippleCardComponent } from './ripple-card.component';
+import { PaymentFormComponent } from './payment-form.component';
 
-describe('RippleCardComponent', () => {
-  let component: RippleCardComponent;
-  let fixture: ComponentFixture<RippleCardComponent>;
+describe('PaymentFormComponent', () => {
+  let component: PaymentFormComponent;
+  let fixture: ComponentFixture<PaymentFormComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ RippleCardComponent ]
+      declarations: [ PaymentFormComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(RippleCardComponent);
+    fixture = TestBed.createComponent(PaymentFormComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
