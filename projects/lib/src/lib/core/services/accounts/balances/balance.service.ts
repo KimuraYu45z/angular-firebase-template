@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { AccountService } from '../account.service';
-import { Balance } from './balance';
+import { Balance } from './balance.model';
 
 @Injectable({
   providedIn: 'root',

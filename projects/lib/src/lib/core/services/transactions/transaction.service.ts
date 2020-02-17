@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/firestore';
-import { Transaction } from './transaction';
+import { Transaction } from './transaction.model';
 
 @Injectable({
   providedIn: 'root',
@@ -10,7 +10,7 @@ export class TransactionService {
 
   constructor(private firestore: AngularFirestore) {}
 
-  transactionssFrom$(accountID: string) {
+  transactionsFrom$(accountID: string) {
     return this.firestore
       .collection<Transaction>(TransactionService.collectionPath, (ref) =>
         ref.where('from_account_id', '==', accountID),

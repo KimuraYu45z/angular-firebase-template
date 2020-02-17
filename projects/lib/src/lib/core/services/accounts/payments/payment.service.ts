@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/firestore';
-import { Payment } from './payment';
+import { Payment } from './payment.model';
 import { AngularFireFunctions } from '@angular/fire/functions';
 import { ChargeData } from '../../../types/charge-data';
 

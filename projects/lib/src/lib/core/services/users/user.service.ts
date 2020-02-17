@@ -4,13 +4,14 @@ import { AngularFirestore } from '@angular/fire/firestore';
 import { Observable, of } from 'rxjs';
 import * as firebase from 'firebase/app';
 import { map, mergeMap } from 'rxjs/operators';
-import { IUser } from './i-user';
-import { IAccount } from '../accounts/i-account';
+import { IUser } from './i-user.model';
+import { IAccount } from '../accounts/i-account.model';
 import { AccountService } from '../accounts/account.service';
 import {
   ErrorUnExistingUserSignIn,
   ErrorExistingUserSignUp,
 } from '../../types';
+import { isNotNull } from '../../operators';
 
 @Injectable({
   providedIn: 'root',
@@ -19,9 +20,9 @@ export class UserService<Account extends IAccount, User extends IUser> {
   static readonly collectionPath = 'users';
 
   authorized$: Observable<boolean>;
-  userID$: Observable<string | null>;
-  currentUser$: Observable<User | null>;
-  selectedAccountID$: Observable<string | null>;
+  userID$: Observable<string | undefined>;
+  currentUser$: Observable<User | undefined>;
+  selectedAccountID$: Observable<string | undefined>;
 
   constructor(
     private auth: AngularFireAuth,
@@ -29,18 +30,13 @@ export class UserService<Account extends IAccount, User extends IUser> {
     private account: AccountService<Account>,
   ) {
     this.authorized$ = this.auth.user.pipe(map((user) => user !== null));
-    this.userID$ = this.auth.user.pipe(map((user) => (user ? user.uid : null)));
+    this.userID$ = this.auth.user.pipe(map((user) => user?.uid));
     this.currentUser$ = this.userID$.pipe(
-      mergeMap((userID) =>
-        userID
-          ? this.user$(userID).pipe(
-              map((user) => (user !== undefined ? user : null)),
-            )
-          : of(null),
-      ),
+      isNotNull(),
+      mergeMap((userID) => this.user$(userID)),
     );
     this.selectedAccountID$ = this.currentUser$.pipe(
-      map((user) => (user ? user.selected_account_id : null)),
+      map((user) => user?.selected_account_id),
     );
   }
 
@@ -113,12 +109,9 @@ export class UserService<Account extends IAccount, User extends IUser> {
       credential = await this.auth.auth.signInWithPopup(provider);
     }
 
-    if (
-      credential.additionalUserInfo &&
-      credential.additionalUserInfo.isNewUser
-    ) {
+    if (credential.additionalUserInfo?.isNewUser) {
       await this.firestore.firestore.runTransaction(async (t) => {
-        const userID = credential.user!.uid;
+        const userID = credential.user?.uid || '';
 
         const accountID = this.account.pipeCreateTransaction(
           t,
@@ -182,11 +175,8 @@ export class UserService<Account extends IAccount, User extends IUser> {
       credential = await this.auth.auth.signInWithPopup(provider);
     }
 
-    if (
-      credential.additionalUserInfo &&
-      credential.additionalUserInfo.isNewUser
-    ) {
-      await this.auth.auth.currentUser!.delete();
+    if (credential.additionalUserInfo?.isNewUser) {
+      await this.auth.auth.currentUser?.delete();
       throw new ErrorUnExistingUserSignIn();
     }
 

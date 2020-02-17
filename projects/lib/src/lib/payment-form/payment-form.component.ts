@@ -26,14 +26,13 @@ export class PaymentFormComponent implements OnInit {
   constructor(
     @Inject(CONFIG)
     private config: Config,
-  ) {
+  ) {}
+
+  ngOnInit() {
     if (!this.config.stripe) {
       throw new ErrorStripeConfigUndefined();
     }
-  }
-
-  ngOnInit() {
-    this._stripe = Stripe(this.config.stripe!.pk);
+    this._stripe = Stripe(this.config.stripe.pk);
     this._elements = this._stripe.elements();
 
     this._card = this._elements.create('card', { hidePostalCode: true });

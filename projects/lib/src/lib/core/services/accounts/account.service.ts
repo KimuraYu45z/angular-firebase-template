@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { IAccount } from './i-account';
+import { IAccount } from './i-account.model';
 import { AngularFirestore } from '@angular/fire/firestore';
 import * as firebase from 'firebase/app';
 import { AngularFireFunctions } from '@angular/fire/functions';

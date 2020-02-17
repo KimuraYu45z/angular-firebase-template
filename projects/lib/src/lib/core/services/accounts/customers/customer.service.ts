@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { AngularFireFunctions } from '@angular/fire/functions';
 import { AccountService } from '../account.service';
-import { Customer } from './customer';
+import { Customer } from './customer.model';
 
 @Injectable({
   providedIn: 'root',
