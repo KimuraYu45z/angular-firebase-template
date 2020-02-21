@@ -6,6 +6,8 @@ export * from './accounts/customers/customer.service';
 export * from './accounts/customers/customer.model';
 export * from './accounts/payments/payment.service';
 export * from './accounts/payments/payment.model';
+export * from './accounts/privates/private.service';
+export * from './accounts/privates/i-private.model';
 export * from './accounts/payments/subscriptions/subscription.service';
 export * from './transactions/transaction.service';
 export * from './transactions/transaction.model';
