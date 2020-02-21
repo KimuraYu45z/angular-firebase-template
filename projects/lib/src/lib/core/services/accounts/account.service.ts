@@ -61,7 +61,6 @@ export class AccountService<Account extends IAccount> {
    *
    * @param transaction
    * @param userID
-   * @param imageURL
    * @param accountFactory
    * @returns accountID
    */

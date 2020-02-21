@@ -12,11 +12,17 @@ import {
   ErrorExistingUserSignUp,
 } from '../../types';
 import { isNotNull } from '../../operators';
+import { PrivateService } from '../accounts/privates/private.service';
+import { IPrivate } from '../accounts/privates/i-private.model';
 
 @Injectable({
   providedIn: 'root',
 })
-export class UserService<Account extends IAccount, User extends IUser> {
+export class UserService<
+  User extends IUser,
+  Account extends IAccount,
+  Private extends IPrivate
+> {
   static readonly collectionPath = 'users';
 
   authorized$: Observable<boolean>;
@@ -28,6 +34,7 @@ export class UserService<Account extends IAccount, User extends IUser> {
     private auth: AngularFireAuth,
     private firestore: AngularFirestore,
     private account: AccountService<Account>,
+    private accountPrivate: PrivateService<Private>,
   ) {
     this.authorized$ = this.auth.user.pipe(map((user) => user !== null));
     this.userID$ = this.auth.user.pipe(map((user) => user?.uid));
@@ -74,6 +81,7 @@ export class UserService<Account extends IAccount, User extends IUser> {
   async signUp(
     userFactory: (iuser: IUser) => User,
     accountFactory: (iAccount: IAccount) => Account,
+    privateFactory: (iPrivate: IPrivate) => Private,
     email: string,
     password: string,
   ): Promise<firebase.auth.UserCredential>;
@@ -87,12 +95,14 @@ export class UserService<Account extends IAccount, User extends IUser> {
   async signUp(
     userFactory: (iuser: IUser) => User,
     accountFactory: (iAccount: IAccount) => Account,
+    privateFactory: (iPrivate: IPrivate) => Private,
     provider: firebase.auth.AuthProvider,
   ): Promise<firebase.auth.UserCredential>;
 
   async signUp(
     userFactory: (iuser: IUser) => User,
     accountFactory: (iAccount: IAccount) => Account,
+    privateFactory: (iPrivate: IPrivate) => Private,
     ...args: any[]
   ): Promise<firebase.auth.UserCredential> {
     let credential: firebase.auth.UserCredential;
@@ -117,6 +127,13 @@ export class UserService<Account extends IAccount, User extends IUser> {
           t,
           userID,
           accountFactory,
+        );
+
+        this.accountPrivate.pipeCreateTransaction(
+          t,
+          accountID,
+          credential.user?.email || '',
+          privateFactory,
         );
 
         const iUser: IUser = {
