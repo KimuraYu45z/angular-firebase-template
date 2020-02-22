@@ -3,14 +3,14 @@ import {
   NG_VALIDATORS,
   Validator,
   AbstractControl,
-  Validators
+  Validators,
 } from '@angular/forms';
 
 @Directive({
   selector: '[max]',
   providers: [
-    { provide: NG_VALIDATORS, useExisting: MaxDirective, multi: true }
-  ]
+    { provide: NG_VALIDATORS, useExisting: MaxDirective, multi: true },
+  ],
 })
 export class MaxDirective implements Validator {
   @Input() max: number;
@@ -19,6 +19,6 @@ export class MaxDirective implements Validator {
   }
 
   validate(control: AbstractControl): { [key: string]: any } | null {
-    return Validators.min(this.max)(control);
+    return Validators.max(this.max)(control);
   }
 }
