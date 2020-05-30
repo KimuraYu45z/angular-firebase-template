@@ -5,7 +5,7 @@ import {
   ElementRef,
   Inject,
 } from '@angular/core';
-import { Config, CONFIG } from '..';
+import { Config, CONFIG } from '../config';
 
 export class ErrorStripeConfigUndefined extends Error {}
 
