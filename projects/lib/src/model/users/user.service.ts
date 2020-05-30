@@ -7,13 +7,20 @@ import { map, mergeMap } from 'rxjs/operators';
 import { IUser } from './i-user.model';
 import { IAccount } from '../accounts/i-account.model';
 import { AccountService } from '../accounts/account.service';
-import {
-  ErrorUnExistingUserSignIn,
-  ErrorExistingUserSignUp,
-} from '../../types';
-import { isNotNull } from '../../operators';
+import { isNotNull } from '../../lib/operators';
 import { PrivateService } from '../accounts/privates/private.service';
 import { IPrivate } from '../accounts/privates/i-private.model';
+import {
+  ErrorInvalidEmail,
+  ErrorEmailAlreadyInUse,
+  ErrorOperationNotAllowed,
+  ErrorWeakPassword,
+  ErrorAccountExistsWithDifferentCredential,
+  ErrorExistingUserSignUp,
+  ErrorUserDisabled,
+  ErrorUserNotFound,
+  ErrorWrongPassword,
+} from './errors';
 
 @Injectable({
   providedIn: 'root',
@@ -40,23 +47,30 @@ export class UserService<
     this.userID$ = this.auth.user.pipe(map((user) => user?.uid));
     this.currentUser$ = this.userID$.pipe(
       isNotNull(),
-      mergeMap((userID) => this.user$(userID)),
+      mergeMap((userID) => this.get$(userID)),
     );
     this.selectedAccountID$ = this.currentUser$.pipe(
       map((user) => user?.selected_account_id),
     );
   }
 
+  get(userID: string) {
+    return this.firestore
+      .collection<User>(UserService.collectionPath)
+      .doc<User>(userID)
+      .get()
+      .pipe(map((doc) => doc.data() as User | undefined));
+  }
+
   /**
    *
    * @param userID
    */
-  user$(userID: string) {
+  get$(userID: string) {
     return this.firestore
       .collection<User>(UserService.collectionPath)
       .doc<User>(userID)
-      .valueChanges()
-      .pipe();
+      .valueChanges();
   }
 
   /**
@@ -110,13 +124,34 @@ export class UserService<
     if (typeof args[0] === 'string') {
       const [email, password] = args as [string, string];
 
-      credential = await this.auth.auth.createUserWithEmailAndPassword(
-        email,
-        password,
-      );
+      credential = await this.auth.auth
+        .createUserWithEmailAndPassword(email, password)
+        .catch((error) => {
+          switch (error.code) {
+            case 'auth/email-already-in-use':
+              throw new ErrorEmailAlreadyInUse();
+            case 'auth/invalid-email':
+              throw new ErrorInvalidEmail();
+            case 'auth/operation-not-allowed':
+              throw new ErrorOperationNotAllowed();
+            case 'auth/weak-password':
+              throw new ErrorWeakPassword();
+            default:
+              throw error;
+          }
+        });
     } else {
       const [provider] = args as [firebase.auth.AuthProvider];
-      credential = await this.auth.auth.signInWithPopup(provider);
+      credential = await this.auth.auth
+        .signInWithPopup(provider)
+        .catch((error) => {
+          switch (error.code) {
+            case 'auth/account-exists-with-different-credential':
+              throw new ErrorAccountExistsWithDifferentCredential();
+            default:
+              throw error;
+          }
+        });
     }
 
     if (credential.additionalUserInfo?.isNewUser) {
@@ -183,10 +218,22 @@ export class UserService<
     if (typeof args[0] === 'string') {
       const [email, password] = args as [string, string];
 
-      credential = await this.auth.auth.signInWithEmailAndPassword(
-        email,
-        password,
-      );
+      credential = await this.auth.auth
+        .signInWithEmailAndPassword(email, password)
+        .catch((error) => {
+          switch (error.code) {
+            case 'auth/invalid-email':
+              throw new ErrorInvalidEmail();
+            case 'auth/user-disabled':
+              throw new ErrorUserDisabled();
+            case 'auth/user-not-found':
+              throw new ErrorUserNotFound();
+            case 'auth/wrong-password':
+              throw new ErrorWrongPassword();
+            default:
+              throw Error();
+          }
+        });
     } else {
       const [provider] = args as [firebase.auth.AuthProvider];
       credential = await this.auth.auth.signInWithPopup(provider);
@@ -194,7 +241,7 @@ export class UserService<
 
     if (credential.additionalUserInfo?.isNewUser) {
       await this.auth.auth.currentUser?.delete();
-      throw new ErrorUnExistingUserSignIn();
+      throw new ErrorUserNotFound();
     }
 
     return credential;

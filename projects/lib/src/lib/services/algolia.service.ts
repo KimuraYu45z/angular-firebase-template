@@ -1,7 +1,8 @@
 import { Injectable, Inject } from '@angular/core';
 import algoliasearch, { AlgoliaSearchOptions } from 'algoliasearch';
-import { CONFIG, Config } from '../types/config';
-import { ErrorAlgoliaConfigUndefined } from '../types';
+import { CONFIG, Config } from '../config';
+
+export class ErrorAlgoliaConfigUndefined extends Error {}
 
 @Injectable({
   providedIn: 'root',

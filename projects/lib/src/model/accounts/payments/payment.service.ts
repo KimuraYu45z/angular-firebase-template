@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { Payment } from './payment.model';
 import { AngularFireFunctions } from '@angular/fire/functions';
-import { ChargeData } from '../../../types/charge-data';
+import { ChargeData } from './charge-data';
 
 @Injectable({
   providedIn: 'root',
@@ -25,9 +25,7 @@ export class PaymentService {
 
   chargeFactory<T>(name: string) {
     return async (data: T & { charge_data: ChargeData }) => {
-      return await this.functions
-        .httpsCallable(name)(data)
-        .toPromise();
+      return await this.functions.httpsCallable(name)(data).toPromise();
     };
   }
 }

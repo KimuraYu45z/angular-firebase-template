@@ -4,6 +4,7 @@ import { AngularFirestore } from '@angular/fire/firestore';
 import * as firebase from 'firebase/app';
 import { AngularFireFunctions } from '@angular/fire/functions';
 import { UserRecord } from './user-record';
+import { map } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root',
@@ -16,16 +17,23 @@ export class AccountService<Account extends IAccount> {
     private functions: AngularFireFunctions,
   ) {}
 
+  get(accountID: string) {
+    return this.firestore
+      .collection<Account>(AccountService.collectionPath)
+      .doc<Account>(accountID)
+      .get()
+      .pipe(map((doc) => doc.data() as Account | undefined));
+  }
+
   /**
    *
    * @param accountID
    */
-  account$(accountID: string) {
+  get$(accountID: string) {
     return this.firestore
       .collection<Account>(AccountService.collectionPath)
       .doc<Account>(accountID)
-      .valueChanges()
-      .pipe();
+      .valueChanges();
   }
 
   /**
@@ -101,7 +109,7 @@ export class AccountService<Account extends IAccount> {
    *
    * @param accountID
    */
-  getImagePath(accountID: string) {
+  getImageStoragePath(accountID: string) {
     return `${AccountService.collectionPath}/${accountID}/image.jpg`;
   }
 

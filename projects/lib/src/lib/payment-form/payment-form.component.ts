@@ -5,7 +5,9 @@ import {
   ElementRef,
   Inject,
 } from '@angular/core';
-import { Config, CONFIG, ErrorStripeConfigUndefined } from '../core';
+import { Config, CONFIG } from '..';
+
+export class ErrorStripeConfigUndefined extends Error {}
 
 // @dynamic
 @Component({

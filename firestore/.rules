@@ -14,15 +14,15 @@ service cloud.firestore {
       allow create: if request.auth.uid in request.resource.data["admin_user_ids"];
       allow update: if isInAccountAdmin(accountID);
 
-      match /balances/_ {
+      match /balances/balance {
         allow read: if isInAccount(accountID);
       }
 
-      match /customers/_ {
+      match /customers/customer {
         allow read: if isInAccount(accountID);
       }
 
-      match /payments/_ {
+      match /payments/payment {
         allow read: if isInAccount(accountID);
       }
     }

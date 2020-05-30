@@ -2,11 +2,11 @@ import { NgModule, ModuleWithProviders } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { FlexLayoutModule } from '@angular/flex-layout';
-import { MaterialModule } from './shared/material.module';
-import { MinDirective } from './core/directives/min.directive';
-import { MaxDirective } from './core/directives/max.directive';
-import { LoadingDialogComponent } from './loading-dialog/loading-dialog.component';
-import { Config, CONFIG } from './core/types/config';
+import { MaterialModule } from './material.module';
+import { MinDirective } from './directives/min.directive';
+import { MaxDirective } from './directives/max.directive';
+import { LoadingDialogComponent } from '../view/loading-dialog/loading-dialog.component';
+import { Config, CONFIG } from './config';
 import { PaymentFormComponent } from './payment-form/payment-form.component';
 
 @NgModule({

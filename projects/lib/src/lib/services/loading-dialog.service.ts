@@ -3,11 +3,11 @@ import { MatDialog } from '@angular/material/dialog';
 import { Observable } from 'rxjs';
 import {
   LoadingDialogComponent,
-  LoadingDialogComponentData
-} from '../../loading-dialog/loading-dialog.component';
+  LoadingDialogComponentData,
+} from '../../view/loading-dialog/loading-dialog.component';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class LoadingDialogService {
   constructor(private dialog: MatDialog) {}
