@@ -110,7 +110,10 @@ export class UserService<
     accountFactory: (iAccount: IAccount) => Account,
     privateFactory: (iPrivate: IPrivate) => Private,
     provider:
-      | firebase.auth.AuthProvider
+      | (firebase.auth.AuthProvider & {
+          email?: undefined;
+          password?: undefined;
+        })
       | { email: string; password: string; providerId?: undefined },
   ): Promise<firebase.auth.UserCredential> {
     let credential: firebase.auth.UserCredential;
@@ -213,7 +216,10 @@ export class UserService<
    */
   async signIn(
     provider:
-      | firebase.auth.AuthProvider
+      | (firebase.auth.AuthProvider & {
+          email?: undefined;
+          password?: undefined;
+        })
       | { email: string; password: string; providerId: undefined },
   ): Promise<firebase.auth.UserCredential> {
     let credential: firebase.auth.UserCredential;
