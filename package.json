@@ -8,7 +8,7 @@
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "publish": "node bundle && cd dist/lib && npm publish"
+    "publish": "cd dist/lib && npm publish"
   },
   "private": true,
   "dependencies": {

@@ -16,6 +16,12 @@ import {
   ErrorOperationNotAllowed,
   ErrorWeakPassword,
   ErrorAccountExistsWithDifferentCredential,
+  ErrorAuthDomainConfigRequired,
+  ErrorCancelledPopupRequest,
+  ErrorOperationNotSupportedInThisEnvironment,
+  ErrorPopupBlocked,
+  ErrorPopupClosedByUser,
+  ErrorUnauthorizedDomain,
   ErrorExistingUserSignUp,
   ErrorUserDisabled,
   ErrorUserNotFound,
@@ -85,47 +91,19 @@ export class UserService<
       .update(data);
   }
 
-  /**
-   *
-   * @param userFactory
-   * @param accountFactory
-   * @param email
-   * @param password
-   */
   async signUp(
     userFactory: (iuser: IUser) => User,
     accountFactory: (iAccount: IAccount) => Account,
     privateFactory: (iPrivate: IPrivate) => Private,
-    email: string,
-    password: string,
-  ): Promise<firebase.auth.UserCredential>;
-
-  /**
-   *
-   * @param userFactory
-   * @param accountFactory
-   * @param provider
-   */
-  async signUp(
-    userFactory: (iuser: IUser) => User,
-    accountFactory: (iAccount: IAccount) => Account,
-    privateFactory: (iPrivate: IPrivate) => Private,
-    provider: firebase.auth.AuthProvider,
-  ): Promise<firebase.auth.UserCredential>;
-
-  async signUp(
-    userFactory: (iuser: IUser) => User,
-    accountFactory: (iAccount: IAccount) => Account,
-    privateFactory: (iPrivate: IPrivate) => Private,
-    ...args: any[]
+    provider:
+      | firebase.auth.AuthProvider
+      | { email: string; password: string; providerId: undefined },
   ): Promise<firebase.auth.UserCredential> {
     let credential: firebase.auth.UserCredential;
 
-    if (typeof args[0] === 'string') {
-      const [email, password] = args as [string, string];
-
+    if (provider.providerId === undefined) {
       credential = await this.auth.auth
-        .createUserWithEmailAndPassword(email, password)
+        .createUserWithEmailAndPassword(provider.email, provider.password)
         .catch((error) => {
           switch (error.code) {
             case 'auth/email-already-in-use':
@@ -141,13 +119,26 @@ export class UserService<
           }
         });
     } else {
-      const [provider] = args as [firebase.auth.AuthProvider];
       credential = await this.auth.auth
         .signInWithPopup(provider)
         .catch((error) => {
           switch (error.code) {
             case 'auth/account-exists-with-different-credential':
               throw new ErrorAccountExistsWithDifferentCredential();
+            case 'auth/auth-domain-config-required':
+              throw new ErrorAuthDomainConfigRequired();
+            case 'auth/cancelled-popup-request':
+              throw new ErrorCancelledPopupRequest();
+            case 'auth/operation-not-allowed':
+              throw new ErrorOperationNotAllowed();
+            case 'auth/operation-not-supported-in-this-environment':
+              throw new ErrorOperationNotSupportedInThisEnvironment();
+            case 'auth/popup-blocked':
+              throw new ErrorPopupBlocked();
+            case 'auth/popup-closed-by-user':
+              throw new ErrorPopupClosedByUser();
+            case 'auth/unauthorized-domain':
+              throw new ErrorUnauthorizedDomain();
             default:
               throw error;
           }
@@ -192,34 +183,22 @@ export class UserService<
 
   /**
    *
-   * @param userFactory
-   * @param accountFactory
-   * @param email
-   * @param password
-   */
-  async signIn(
-    email: string,
-    password: string,
-  ): Promise<firebase.auth.UserCredential>;
-
-  /**
-   *
-   * @param userFactory
-   * @param accountFactory
+   * - `ErrorInvalidEmail`
+   * - `ErrorUserDisabled`
+   * - `ErrorUserNotFound`
+   * - `ErrorWrongPassword`
    * @param provider
    */
   async signIn(
-    provider: firebase.auth.AuthProvider,
-  ): Promise<firebase.auth.UserCredential>;
-
-  async signIn(...args: any[]): Promise<firebase.auth.UserCredential> {
+    provider:
+      | firebase.auth.AuthProvider
+      | { email: string; password: string; providerId: undefined },
+  ): Promise<firebase.auth.UserCredential> {
     let credential: firebase.auth.UserCredential;
 
-    if (typeof args[0] === 'string') {
-      const [email, password] = args as [string, string];
-
+    if (provider.providerId === undefined) {
       credential = await this.auth.auth
-        .signInWithEmailAndPassword(email, password)
+        .signInWithEmailAndPassword(provider.email, provider.password)
         .catch((error) => {
           switch (error.code) {
             case 'auth/invalid-email':
@@ -235,8 +214,30 @@ export class UserService<
           }
         });
     } else {
-      const [provider] = args as [firebase.auth.AuthProvider];
-      credential = await this.auth.auth.signInWithPopup(provider);
+      credential = await this.auth.auth
+        .signInWithPopup(provider)
+        .catch((error) => {
+          switch (error.code) {
+            case 'auth/account-exists-with-different-credential':
+              throw new ErrorAccountExistsWithDifferentCredential();
+            case 'auth/auth-domain-config-required':
+              throw new ErrorAuthDomainConfigRequired();
+            case 'auth/cancelled-popup-request':
+              throw new ErrorCancelledPopupRequest();
+            case 'auth/operation-not-allowed':
+              throw new ErrorOperationNotAllowed();
+            case 'auth/operation-not-supported-in-this-environment':
+              throw new ErrorOperationNotSupportedInThisEnvironment();
+            case 'auth/popup-blocked':
+              throw new ErrorPopupBlocked();
+            case 'auth/popup-closed-by-user':
+              throw new ErrorPopupClosedByUser();
+            case 'auth/unauthorized-domain':
+              throw new ErrorUnauthorizedDomain();
+            default:
+              throw Error();
+          }
+        });
     }
 
     if (credential.additionalUserInfo?.isNewUser) {
