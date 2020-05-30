@@ -2,7 +2,8 @@ import { NgModule, ModuleWithProviders } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { FlexLayoutModule } from '@angular/flex-layout';
-import { MaterialModule } from './material.module';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MinDirective } from './directives/min.directive';
 import { MaxDirective } from './directives/max.directive';
 import { LoadingDialogComponent } from '../view/loading-dialog/loading-dialog.component';
@@ -16,7 +17,13 @@ import { PaymentFormComponent } from './payment-form/payment-form.component';
     LoadingDialogComponent,
     PaymentFormComponent,
   ],
-  imports: [CommonModule, FormsModule, FlexLayoutModule, MaterialModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    FlexLayoutModule,
+    MatDialogModule,
+    MatProgressSpinnerModule,
+  ],
   exports: [
     MinDirective,
     MaxDirective,

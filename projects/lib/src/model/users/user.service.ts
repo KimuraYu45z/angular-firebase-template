@@ -220,7 +220,7 @@ export class UserService<
           email?: undefined;
           password?: undefined;
         })
-      | { email: string; password: string; providerId: undefined },
+      | { email: string; password: string; providerId?: undefined },
   ): Promise<firebase.auth.UserCredential> {
     let credential: firebase.auth.UserCredential;
 
