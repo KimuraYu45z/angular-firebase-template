@@ -91,6 +91,20 @@ export class UserService<
       .update(data);
   }
 
+  /**
+   * - `ErrorEmailAlreadyInUse`
+   * - `ErrorInvalidEmail`
+   * - `ErrorOperationNotAllowed`
+   * - `ErrorWeakPassword`
+   * - `ErrorAccountExistsWithDifferentCredential`
+   * - `ErrorAuthDomainConfigRequired`
+   * - `ErrorCancelledPopupRequest`
+   * - `ErrorOperationNotAllowed`
+   * - `ErrorOperationNotSupportedInThisEnvironment`
+   * - `ErrorPopupBlocked`
+   * - `ErrorPopupClosedByUser`
+   * - `ErrorUnauthorizedDomain`
+   */
   async signUp(
     userFactory: (iuser: IUser) => User,
     accountFactory: (iAccount: IAccount) => Account,
@@ -187,6 +201,14 @@ export class UserService<
    * - `ErrorUserDisabled`
    * - `ErrorUserNotFound`
    * - `ErrorWrongPassword`
+   * - `ErrorAccountExistsWithDifferentCredential`
+   * - `ErrorAuthDomainConfigRequired`
+   * - `ErrorCancelledPopupRequest`
+   * - `ErrorOperationNotAllowed`
+   * - `ErrorOperationNotSupportedInThisEnvironment`
+   * - `ErrorPopupBlocked`
+   * - `ErrorPopupClosedByUser`
+   * - `ErrorUnauthorizedDomain`
    * @param provider
    */
   async signIn(
