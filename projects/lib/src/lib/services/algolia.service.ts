@@ -29,9 +29,7 @@ export class AlgoliaService {
 
     const index = client.initIndex(indexName);
     const res = await index.search<T>(query, options);
-    return {
-      total: res.nbHits,
-      hits: res.hits,
-    };
+    
+    return res;
   }
 }
