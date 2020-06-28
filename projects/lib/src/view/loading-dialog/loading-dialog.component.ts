@@ -6,7 +6,7 @@ import { Component, OnInit, Input } from '@angular/core';
   templateUrl: './loading-dialog.component.html',
   styleUrls: ['./loading-dialog.component.css'],
 })
-export class LoadingDialogComponent implements OnInit {
+export class ViewLoadingDialogComponent implements OnInit {
   @Input()
   message: string;
 

@@ -15,10 +15,7 @@
     "lib": ["es2018", "dom"],
     "paths": {
       "lib": ["dist/lib"],
-      "lib/*": ["dist/lib/*"],
-      "@lib/*": ["projects/lib/src/lib/*"],
-      "@model/*": ["projects/lib/src/model/*"],
-      "@view/*": ["projects/lib/src/view/*"]
+      "lib/*": ["dist/lib/*"]
     },
     "strict": true
   },

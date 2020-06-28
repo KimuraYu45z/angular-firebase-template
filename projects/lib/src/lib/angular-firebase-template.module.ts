@@ -2,11 +2,11 @@ import { NgModule, ModuleWithProviders } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Config, CONFIG } from './config';
 import { MatDialogModule } from '@angular/material/dialog';
-import { AFTLoadingDialogModule } from './loading-dialog/loading-dialog.module';
+import { LoadingDialogModule } from './loading-dialog/loading-dialog.module';
 
 @NgModule({
   declarations: [],
-  imports: [CommonModule, MatDialogModule, AFTLoadingDialogModule],
+  imports: [CommonModule, MatDialogModule, LoadingDialogModule],
 })
 export class AngularFirebaseTemplateModule {
   static forRoot(
