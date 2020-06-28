@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import {
   LoadingDialogComponent,
   LoadingDialogComponentData,
-} from '../../view/loading-dialog/loading-dialog.component';
+} from '@lib/loading-dialog/loading-dialog.component';
 
 @Injectable({
   providedIn: 'root',

@@ -1,15 +1,7 @@
 <mat-dialog-content class="dialog">
   <div fxLayout="row" fxLayoutAlign="center center">
     <div fxFlex="60px" style="height: 60px; overflow: hidden;">
-      <ng-container *ngIf="isCompleted || error; else isNotCompleted">
-        <mat-progress-spinner
-          [diameter]="60"
-          [mode]="'determinate'"
-          [value]="progress"
-          [color]="error ? 'warn' : 'primary'"
-        ></mat-progress-spinner>
-      </ng-container>
-      <ng-template #isNotCompleted>
+      <ng-template>
         <mat-progress-spinner
           [diameter]="60"
           [mode]="'indeterminate'"
@@ -17,7 +9,7 @@
       </ng-template>
     </div>
     <p fxFlex="1 1 auto" style="margin: 16px;">
-      {{ error ? error : (message$ | async) }}
+      {{ message }}
     </p>
   </div>
 </mat-dialog-content>

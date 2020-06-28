@@ -1,55 +1,18 @@
-import { Component, OnInit, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { Observable, timer } from 'rxjs';
-
-export type LoadingDialogComponentData = {
-  message$: Observable<string>;
-};
+import { Component, OnInit, Input } from '@angular/core';
 
 // @dynamic
 @Component({
-  selector: 'lib-loading-dialog',
+  selector: 'view-loading-dialog',
   templateUrl: './loading-dialog.component.html',
   styleUrls: ['./loading-dialog.component.css'],
 })
 export class LoadingDialogComponent implements OnInit {
-  message$: Observable<string>;
-  error: string;
-  isCompleted: boolean;
-  progress: number;
+  @Input()
+  message: string;
 
-  constructor(
-    private dialogRef: MatDialogRef<LoadingDialogComponent>,
-    @Inject(MAT_DIALOG_DATA)
-    data: LoadingDialogComponentData,
-  ) {
-    this.message$ = data.message$;
-    this.error = '';
-    this.isCompleted = false;
-    this.progress = 0;
+  constructor() {
+    this.message = '';
   }
 
-  ngOnInit() {
-    this.message$.subscribe(
-      undefined,
-      async (error) => {
-        this.error = error.toString();
-
-        await this.closeDialog();
-      },
-      async () => {
-        this.isCompleted = true;
-
-        await this.closeDialog();
-      },
-    );
-  }
-
-  async closeDialog() {
-    await timer(100).toPromise();
-    this.progress = 100;
-
-    await timer(1000).toPromise();
-    this.dialogRef.close();
-  }
+  ngOnInit() {}
 }
