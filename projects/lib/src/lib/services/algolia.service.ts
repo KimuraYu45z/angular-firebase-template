@@ -13,6 +13,13 @@ export class AlgoliaService {
     private config: Config,
   ) {}
 
+  /**
+   *
+   * @param indexName
+   * @param query
+   * @param options
+   * @throws `ErrorAlgoliaConfigUndefined`
+   */
   async search<T>(
     indexName: string,
     query: string,
@@ -29,7 +36,7 @@ export class AlgoliaService {
 
     const index = client.initIndex(indexName);
     const res = await index.search<T>(query, options);
-    
+
     return res;
   }
 }

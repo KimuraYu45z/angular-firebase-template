@@ -2,16 +2,13 @@ import { Injectable } from '@angular/core';
 import { AngularFireStorage } from '@angular/fire/storage';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class StorageService {
   constructor(private fireStorage: AngularFireStorage) {}
 
   async getURL(path: string) {
-    return this.fireStorage
-      .ref(path)
-      .getDownloadURL()
-      .toPromise<string>();
+    return this.fireStorage.ref(path).getDownloadURL().toPromise<string>();
   }
 
   upload(path: string, blob: Blob) {
@@ -19,8 +16,8 @@ export class StorageService {
       this.fireStorage
         .ref(path)
         .put(blob)
-        .then(snapshot => resolve(snapshot.downloadURL))
-        .catch(reason => reject(reason));
+        .then((snapshot) => resolve(snapshot.downloadURL))
+        .catch((reason) => reject(reason));
     });
   }
 
@@ -29,8 +26,8 @@ export class StorageService {
       this.fireStorage
         .ref(path)
         .putString(data, format)
-        .then(snapshot => resolve(snapshot.downloadURL))
-        .catch(reason => reject(reason));
+        .then((snapshot) => resolve(snapshot.downloadURL))
+        .catch((reason) => reject(reason));
     });
   }
 }

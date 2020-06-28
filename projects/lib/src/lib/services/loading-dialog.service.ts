@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { Observable } from 'rxjs';
+import { Observable, BehaviorSubject } from 'rxjs';
 import {
   LoadingDialogComponent,
   LoadingDialogComponentData,
@@ -12,11 +12,18 @@ import {
 export class LoadingDialogService {
   constructor(private dialog: MatDialog) {}
 
-  open(message$: Observable<string>) {
-    return this.dialog.open<
+  open(message: string) {
+    const message$ = new BehaviorSubject<string>(message);
+
+    const dialogRef = this.dialog.open<
       LoadingDialogComponent,
       LoadingDialogComponentData,
       undefined
     >(LoadingDialogComponent, { data: { message$ }, disableClose: true });
+
+    return {
+      next: (value: string) => message$.next(value),
+      close: () => dialogRef.close(),
+    };
   }
 }
