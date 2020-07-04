@@ -10,23 +10,6 @@ import { AccountService } from '../accounts/account.service';
 import { isNotNull } from '../../lib/operators';
 import { PrivateService } from '../accounts/privates/private.service';
 import { IPrivate } from '../accounts/privates/i-private.model';
-import {
-  ErrorInvalidEmail,
-  ErrorEmailAlreadyInUse,
-  ErrorOperationNotAllowed,
-  ErrorWeakPassword,
-  ErrorAccountExistsWithDifferentCredential,
-  ErrorAuthDomainConfigRequired,
-  ErrorCancelledPopupRequest,
-  ErrorOperationNotSupportedInThisEnvironment,
-  ErrorPopupBlocked,
-  ErrorPopupClosedByUser,
-  ErrorUnauthorizedDomain,
-  ErrorExistingUserSignUp,
-  ErrorUserDisabled,
-  ErrorUserNotFound,
-  ErrorWrongPassword,
-} from './errors';
 
 @Injectable({
   providedIn: 'root',
@@ -92,18 +75,20 @@ export class UserService<
   }
 
   /**
-   * - `ErrorEmailAlreadyInUse`
-   * - `ErrorInvalidEmail`
-   * - `ErrorOperationNotAllowed`
-   * - `ErrorWeakPassword`
-   * - `ErrorAccountExistsWithDifferentCredential`
-   * - `ErrorAuthDomainConfigRequired`
-   * - `ErrorCancelledPopupRequest`
-   * - `ErrorOperationNotAllowed`
-   * - `ErrorOperationNotSupportedInThisEnvironment`
-   * - `ErrorPopupBlocked`
-   * - `ErrorPopupClosedByUser`
-   * - `ErrorUnauthorizedDomain`
+   * `error.code`
+   * - `auth/email-already-in-use`
+   * - `auth/invalid-email`
+   * - `auth/operation-not-allowed`
+   * - `auth/weak-password`
+   * - `auth/account-exists-with-different-credential`
+   * - `auth/auth-domain-config-required`
+   * - `auth/cancelled-popup-request`
+   * - `auth/operation-not-allowed`
+   * - `auth/operation-not-supported-in-this-environment`
+   * - `auth/popup-blocked`
+   * - `auth/popup-closed-by-user`
+   * - `auth/unauthorized-domain`
+   * - `aft/existing-user-signup`
    */
   async signUp(
     userFactory: (iuser: IUser) => User,
@@ -119,47 +104,12 @@ export class UserService<
     let credential: firebase.auth.UserCredential;
 
     if (provider.providerId === undefined) {
-      credential = await this.auth.auth
-        .createUserWithEmailAndPassword(provider.email, provider.password)
-        .catch((error) => {
-          switch (error.code) {
-            case 'auth/email-already-in-use':
-              throw new ErrorEmailAlreadyInUse();
-            case 'auth/invalid-email':
-              throw new ErrorInvalidEmail();
-            case 'auth/operation-not-allowed':
-              throw new ErrorOperationNotAllowed();
-            case 'auth/weak-password':
-              throw new ErrorWeakPassword();
-            default:
-              throw error;
-          }
-        });
+      credential = await this.auth.createUserWithEmailAndPassword(
+        provider.email,
+        provider.password,
+      );
     } else {
-      credential = await this.auth.auth
-        .signInWithPopup(provider)
-        .catch((error) => {
-          switch (error.code) {
-            case 'auth/account-exists-with-different-credential':
-              throw new ErrorAccountExistsWithDifferentCredential();
-            case 'auth/auth-domain-config-required':
-              throw new ErrorAuthDomainConfigRequired();
-            case 'auth/cancelled-popup-request':
-              throw new ErrorCancelledPopupRequest();
-            case 'auth/operation-not-allowed':
-              throw new ErrorOperationNotAllowed();
-            case 'auth/operation-not-supported-in-this-environment':
-              throw new ErrorOperationNotSupportedInThisEnvironment();
-            case 'auth/popup-blocked':
-              throw new ErrorPopupBlocked();
-            case 'auth/popup-closed-by-user':
-              throw new ErrorPopupClosedByUser();
-            case 'auth/unauthorized-domain':
-              throw new ErrorUnauthorizedDomain();
-            default:
-              throw error;
-          }
-        });
+      credential = await this.auth.signInWithPopup(provider);
     }
 
     if (credential.additionalUserInfo?.isNewUser) {
@@ -192,26 +142,27 @@ export class UserService<
       });
     } else {
       await this.signOut();
-      throw new ErrorExistingUserSignUp();
+      throw { code: 'aft/existing-user-signup' };
     }
 
     return credential;
   }
 
   /**
-   *
-   * - `ErrorInvalidEmail`
-   * - `ErrorUserDisabled`
-   * - `ErrorUserNotFound`
-   * - `ErrorWrongPassword`
-   * - `ErrorAccountExistsWithDifferentCredential`
-   * - `ErrorAuthDomainConfigRequired`
-   * - `ErrorCancelledPopupRequest`
-   * - `ErrorOperationNotAllowed`
-   * - `ErrorOperationNotSupportedInThisEnvironment`
-   * - `ErrorPopupBlocked`
-   * - `ErrorPopupClosedByUser`
-   * - `ErrorUnauthorizedDomain`
+   * `error.code`
+   * - `auth/invalid-email`
+   * - `auth/user-disabled`
+   * - `auth/user-not-found`
+   * - `auth/wrong-password`
+   * - `auth/account-exists-with-different-credential`
+   * - `auth/auth-domain-config-required`
+   * - `auth/cancelled-popup-request`
+   * - `auth/operation-not-allowed`
+   * - `auth/operation-not-supported-in-this-environment`
+   * - `auth/popup-blocked`
+   * - `auth/popup-closed-by-user`
+   * - `auth/unauthorized-domain`
+   * - `aft/user-not-found`
    * @param provider
    */
   async signIn(
@@ -225,52 +176,17 @@ export class UserService<
     let credential: firebase.auth.UserCredential;
 
     if (provider.providerId === undefined) {
-      credential = await this.auth.auth
-        .signInWithEmailAndPassword(provider.email, provider.password)
-        .catch((error) => {
-          switch (error.code) {
-            case 'auth/invalid-email':
-              throw new ErrorInvalidEmail();
-            case 'auth/user-disabled':
-              throw new ErrorUserDisabled();
-            case 'auth/user-not-found':
-              throw new ErrorUserNotFound();
-            case 'auth/wrong-password':
-              throw new ErrorWrongPassword();
-            default:
-              throw Error();
-          }
-        });
+      credential = await this.auth.signInWithEmailAndPassword(
+        provider.email,
+        provider.password,
+      );
     } else {
-      credential = await this.auth.auth
-        .signInWithPopup(provider)
-        .catch((error) => {
-          switch (error.code) {
-            case 'auth/account-exists-with-different-credential':
-              throw new ErrorAccountExistsWithDifferentCredential();
-            case 'auth/auth-domain-config-required':
-              throw new ErrorAuthDomainConfigRequired();
-            case 'auth/cancelled-popup-request':
-              throw new ErrorCancelledPopupRequest();
-            case 'auth/operation-not-allowed':
-              throw new ErrorOperationNotAllowed();
-            case 'auth/operation-not-supported-in-this-environment':
-              throw new ErrorOperationNotSupportedInThisEnvironment();
-            case 'auth/popup-blocked':
-              throw new ErrorPopupBlocked();
-            case 'auth/popup-closed-by-user':
-              throw new ErrorPopupClosedByUser();
-            case 'auth/unauthorized-domain':
-              throw new ErrorUnauthorizedDomain();
-            default:
-              throw Error();
-          }
-        });
+      credential = await this.auth.signInWithPopup(provider);
     }
 
     if (credential.additionalUserInfo?.isNewUser) {
-      await this.auth.auth.currentUser?.delete();
-      throw new ErrorUserNotFound();
+      await this.auth.currentUser.then((user) => user?.delete());
+      throw { code: 'aft/user-not-found' };
     }
 
     return credential;
@@ -280,7 +196,7 @@ export class UserService<
    *
    */
   async signOut() {
-    await this.auth.auth.signOut();
+    await this.auth.signOut();
   }
 
   /**
