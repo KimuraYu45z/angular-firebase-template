@@ -91,9 +91,9 @@ export class UserService<
    * - `aft/existing-user-signup`
    */
   async signUp(
-    userFactory: (iuser: IUser) => User,
-    accountFactory: (iAccount: IAccount) => Account,
-    privateFactory: (iPrivate: IPrivate) => Private,
+    userFactory: (iuser: IUser) => Promise<User>,
+    accountFactory: (iAccount: IAccount) => Promise<Account>,
+    privateFactory: (iPrivate: IPrivate) => Promise<Private>,
     provider:
       | (firebase.auth.AuthProvider & {
           email?: undefined;
@@ -116,7 +116,7 @@ export class UserService<
       await this.firestore.firestore.runTransaction(async (t) => {
         const userID = credential.user?.uid || '';
 
-        const accountID = this.account.pipeCreateTransaction(
+        const accountID = await this.account.pipeCreateTransaction(
           t,
           userID,
           accountFactory,
@@ -137,7 +137,7 @@ export class UserService<
           this.firestore
             .collection<User>(UserService.collectionPath)
             .doc<User>(userID).ref,
-          userFactory(iUser),
+          await userFactory(iUser),
         );
       });
     } else {
@@ -206,7 +206,7 @@ export class UserService<
    */
   async createNewAccount(
     userID: string,
-    accountFactory: (iAccount: IAccount) => Account,
+    accountFactory: (iAccount: IAccount) => Promise<Account>,
   ) {
     const now = firebase.firestore.FieldValue.serverTimestamp() as firebase.firestore.Timestamp;
     await this.firestore.firestore.runTransaction(async (t) => {

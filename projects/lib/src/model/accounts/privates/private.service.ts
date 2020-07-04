@@ -46,11 +46,11 @@ export class PrivateService<Private extends IPrivate> {
    * @param email
    * @param accountFactory
    */
-  pipeCreateTransaction(
+  async pipeCreateTransaction(
     transaction: firebase.firestore.Transaction,
     accountID: string,
     email: string,
-    privateFactory: (iPrivate: IPrivate) => Private,
+    privateFactory: (iPrivate: IPrivate) => Promise<Private>,
   ) {
     const iPrivate: IPrivate = {
       email,
@@ -61,7 +61,7 @@ export class PrivateService<Private extends IPrivate> {
         .doc(accountID)
         .collection(PrivateService.collectionPath)
         .doc<Private>(PrivateService.documentID).ref,
-      privateFactory(iPrivate),
+      await privateFactory(iPrivate),
     );
   }
 }

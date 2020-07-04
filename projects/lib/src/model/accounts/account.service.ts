@@ -72,10 +72,10 @@ export class AccountService<Account extends IAccount> {
    * @param accountFactory
    * @returns accountID
    */
-  pipeCreateTransaction(
+  async pipeCreateTransaction(
     transaction: firebase.firestore.Transaction,
     userID: string,
-    accountFactory: (iAccount: IAccount) => Account,
+    accountFactory: (iAccount: IAccount) => Promise<Account>,
   ) {
     const accountID = this.firestore.createId();
 
@@ -87,7 +87,7 @@ export class AccountService<Account extends IAccount> {
       this.firestore
         .collection<Account>(AccountService.collectionPath)
         .doc<Account>(accountID).ref,
-      accountFactory(iAccount),
+      await accountFactory(iAccount),
     );
 
     return accountID;
