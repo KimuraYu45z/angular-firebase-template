@@ -10,5 +10,8 @@
     "algoliasearch": "^4.2.0",
     "firebase": "^7.14.6",
     "@types/stripe-v3": "^3.1.17"
+  },
+  "dependencies": {
+    "tslib": "^2.0.0"
   }
 }
