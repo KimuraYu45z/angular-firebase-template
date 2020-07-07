@@ -1,5 +1,7 @@
 import { Injectable, Inject } from '@angular/core';
-import algoliasearch, { AlgoliaSearchOptions } from 'algoliasearch';
+import algoliasearch from 'algoliasearch';
+import { RequestOptions } from '@algolia/transporter';
+import { SearchOptions } from '@algolia/client-search';
 import { CONFIG, Config } from '../config';
 
 export class ErrorAlgoliaConfigUndefined extends Error {}
@@ -23,7 +25,7 @@ export class AlgoliaService {
   async search<T>(
     indexName: string,
     query: string,
-    options: AlgoliaSearchOptions,
+    requestOptions?: (RequestOptions & SearchOptions) | undefined,
   ) {
     if (!this.config.algolia) {
       throw new ErrorAlgoliaConfigUndefined();
@@ -35,7 +37,7 @@ export class AlgoliaService {
     );
 
     const index = client.initIndex(indexName);
-    const res = await index.search<T>(query, options);
+    const res = await index.search<T>(query, requestOptions);
 
     return res;
   }
