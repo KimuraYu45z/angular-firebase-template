@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { Payment } from './payment.model';
-import { AngularFireFunctions } from '@angular/fire/functions';
-import { ChargeData } from './charge-data';
+import { AccountService } from '../account.service';
 
 @Injectable({
   providedIn: 'root',
@@ -10,22 +9,21 @@ import { ChargeData } from './charge-data';
 export class PaymentService {
   static readonly collectionPath = 'payments';
 
-  constructor(
-    private firestore: AngularFirestore,
-    private functions: AngularFireFunctions,
-  ) {}
+  constructor(private firestore: AngularFirestore) {}
 
   payments$(accountID: string) {
     return this.firestore
-      .collection(PaymentService.collectionPath)
+      .collection(AccountService.collectionPath)
       .doc(accountID)
       .collection<Payment>(PaymentService.collectionPath)
       .valueChanges();
   }
 
-  chargeFactory<T>(name: string) {
-    return async (data: T & { charge_data: ChargeData }) => {
-      return await this.functions.httpsCallable(name)(data).toPromise();
-    };
+  add(accountID: string, data: Payment) {
+    return this.firestore
+      .collection(AccountService.collectionPath)
+      .doc(accountID)
+      .collection<Payment>(PaymentService.collectionPath)
+      .add(data);
   }
 }

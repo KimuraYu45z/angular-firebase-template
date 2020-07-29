@@ -7,7 +7,6 @@ import { map, mergeMap } from 'rxjs/operators';
 import { IUser } from './i-user.model';
 import { IAccount } from '../accounts/i-account.model';
 import { AccountService } from '../accounts/account.service';
-import { isNotNull } from '../../lib/operators';
 import { PrivateService } from '../accounts/privates/private.service';
 import { IPrivate } from '../accounts/privates/i-private.model';
 
@@ -35,8 +34,7 @@ export class UserService<
     this.authorized$ = this.auth.user.pipe(map((user) => user !== null));
     this.userID$ = this.auth.user.pipe(map((user) => user?.uid));
     this.currentUser$ = this.userID$.pipe(
-      isNotNull(),
-      mergeMap((userID) => this.get$(userID)),
+      mergeMap((userID) => (userID ? this.get$(userID) : of(undefined))),
     );
     this.selectedAccountID$ = this.currentUser$.pipe(
       map((user) => user?.selected_account_id),

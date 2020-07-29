@@ -1,5 +1,4 @@
 export * from './balances';
-export * from './customers';
 export * from './payments';
 export * from './privates';
 export * from './account.service';

@@ -1,6 +1,6 @@
 export type Balance = {
-  [currency: string]: {
+  [denom: string]: {
     amount: number;
     total: number;
   };
-}
+};

@@ -31,8 +31,8 @@ export class PrivateService<Private extends IPrivate> {
    * @param accountID
    * @param data
    */
-  async update(accountID: string, data: Partial<Private>) {
-    await this.firestore
+  update(accountID: string, data: Partial<Private>) {
+    return this.firestore
       .collection(AccountService.collectionPath)
       .doc(accountID)
       .collection(PrivateService.collectionPath)

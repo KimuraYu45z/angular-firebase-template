@@ -21,11 +21,16 @@ export class StorageService {
     });
   }
 
-  uploadString(path: string, data: string, format?: 'data_url') {
+  /**
+   *
+   * @param path
+   * @param dataURL starts with `data:`
+   */
+  uploadDataURL(path: string, dataURL: string) {
     return new Promise<string | null>((resolve, reject) => {
       this.fireStorage
         .ref(path)
-        .putString(data, format)
+        .putString(dataURL, 'data_url')
         .then((snapshot) => resolve(snapshot.downloadURL))
         .catch((reason) => reject(reason));
     });
